@@ -22,8 +22,8 @@ const Navbar = () => {
           <Link to="/" className="text-white/80 hover:text-white transition-colors">
             Home
           </Link>
-          <Link to="/marketplace" className="text-white/80 hover:text-white transition-colors">
-            Marketplace
+          <Link to="/explore" className="text-white/80 hover:text-white transition-colors">
+            Explore Talent
           </Link>
           <Link to="/about" className="text-white/80 hover:text-white transition-colors">
             About
@@ -78,11 +78,11 @@ const Navbar = () => {
             Home
           </Link>
           <Link
-            to="/marketplace"
+            to="/explore"
             className="block py-2 text-white/80 hover:text-white"
             onClick={() => setMobileMenuOpen(false)}
           >
-            Marketplace
+            Explore Talent
           </Link>
           <Link
             to="/about"

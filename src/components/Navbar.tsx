@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
-import { Wallet, Bitcoin } from 'lucide-react';
+import { Wallet, PenLine, Bitcoin } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const Navbar = () => {
@@ -24,6 +24,10 @@ const Navbar = () => {
           </Link>
           <Link to="/explore" className="text-white/80 hover:text-white transition-colors">
             Explore Talent
+          </Link>
+          <Link to="/offer-skill" className="text-white/80 hover:text-white transition-colors flex items-center gap-1">
+            <PenLine size={16} />
+            Offer Your Skill
           </Link>
           <Link to="/about" className="text-white/80 hover:text-white transition-colors">
             About
@@ -83,6 +87,14 @@ const Navbar = () => {
             onClick={() => setMobileMenuOpen(false)}
           >
             Explore Talent
+          </Link>
+          <Link
+            to="/offer-skill"
+            className="block py-2 text-white/80 hover:text-white flex items-center gap-1"
+            onClick={() => setMobileMenuOpen(false)}
+          >
+            <PenLine size={16} />
+            Offer Your Skill
           </Link>
           <Link
             to="/about"

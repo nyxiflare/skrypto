@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { MessageSquare, User } from 'lucide-react';
 import { Freelancer } from '@/data/freelancer-data';
+import { Link } from 'react-router-dom';
 
 interface TalentCardProps {
   freelancer: Freelancer;
@@ -33,9 +34,11 @@ const TalentCard = ({ freelancer, viewMode }: TalentCardProps) => {
             {viewMode === 'grid' && (
               <User size={24} className="text-skrypto-purple" />
             )}
-            <h3 className="font-bold text-lg text-white">
-              {freelancer.username}
-            </h3>
+            <Link to={`/profile/${freelancer.username}`}>
+              <h3 className="font-bold text-lg text-white hover:text-skrypto-purple transition-colors">
+                {freelancer.username}
+              </h3>
+            </Link>
           </div>
           <div className="text-right">
             <span className="text-skrypto-green font-mono font-bold">
@@ -72,8 +75,11 @@ const TalentCard = ({ freelancer, viewMode }: TalentCardProps) => {
         <div className={`flex gap-2 ${viewMode === 'list' ? 'flex-col w-full' : 'flex-1'}`}>
           <Button 
             className="bg-skrypto-purple hover:bg-skrypto-purple/90 text-white flex-1"
+            asChild
           >
-            Hire
+            <Link to={`/profile/${freelancer.username}`}>
+              Hire
+            </Link>
           </Button>
           <Button 
             variant="outline" 

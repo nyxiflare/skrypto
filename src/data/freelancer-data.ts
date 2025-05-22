@@ -9,6 +9,15 @@ export interface Freelancer {
   rateType: string;
   rating: number;
   completedJobs: number;
+  walletAddress?: string; // Optional since it's added later
+  avatarUrl?: string; // Optional profile image
+  reviews?: Array<{
+    id: number;
+    username: string;
+    rating: number;
+    comment: string;
+    date: string;
+  }>; // Optional reviews
 }
 
 export const freelancerData: Freelancer[] = [

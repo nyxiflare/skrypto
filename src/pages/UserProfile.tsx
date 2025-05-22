@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -8,8 +8,9 @@ import UserSkillsList from '@/components/profile/UserSkillsList';
 import UserReviews from '@/components/profile/UserReviews';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
-import { Freelancer } from '@/data/freelancer-data';
 import { useGetUserProfile } from '@/hooks/use-user-profile';
+import { SidebarProvider } from "@/components/ui/sidebar";
+import ProfileSidebar from '@/components/profile/ProfileSidebar';
 
 const UserProfile = () => {
   const { username } = useParams<{ username: string }>();
@@ -57,31 +58,31 @@ const UserProfile = () => {
     <div className="min-h-screen bg-skrypto-dark">
       <Navbar />
       
-      <main className="container mx-auto px-4 py-8">
-        <div className="mb-6">
-          <Button 
-            variant="ghost" 
-            asChild 
-            className="text-white/70 hover:text-white hover:bg-white/5"
-          >
-            <Link to="/explore" className="flex items-center">
-              <ArrowLeft className="mr-2" size={16} />
-              Back to Explore
-            </Link>
-          </Button>
+      <SidebarProvider>
+        <div className="flex w-full">
+          {profileData && <ProfileSidebar user={profileData} />}
+          
+          <main className="flex-1 container mx-auto px-4 py-8">
+            <div className="mb-6">
+              <Button 
+                variant="ghost" 
+                asChild 
+                className="text-white/70 hover:text-white hover:bg-white/5"
+              >
+                <Link to="/explore" className="flex items-center">
+                  <ArrowLeft className="mr-2" size={16} />
+                  Back to Explore
+                </Link>
+              </Button>
+            </div>
+            
+            <div className="mt-8 grid grid-cols-1 gap-8">
+              <UserSkillsList skills={profileData.skills || []} rate={profileData.rate} token={profileData.paymentToken} />
+              <UserReviews reviews={profileData.reviews || []} />
+            </div>
+          </main>
         </div>
-
-        <UserProfileHeader user={profileData} />
-        
-        <div className="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2">
-            <UserSkillsList skills={profileData.skills || []} rate={profileData.rate} token={profileData.paymentToken} />
-          </div>
-          <div>
-            <UserReviews reviews={profileData.reviews || []} />
-          </div>
-        </div>
-      </main>
+      </SidebarProvider>
       
       <Footer />
     </div>

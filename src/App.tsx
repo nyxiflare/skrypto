@@ -18,14 +18,16 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/explore" element={<ExploreTalent />} />
-          <Route path="/offer-skill" element={<OfferSkill />} />
-          <Route path="/profile/:username" element={<UserProfile />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+        <div className="min-h-screen flex flex-col">
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/explore" element={<ExploreTalent />} />
+            <Route path="/offer-skill" element={<OfferSkill />} />
+            <Route path="/profile/:username" element={<UserProfile />} />
+            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </div>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>

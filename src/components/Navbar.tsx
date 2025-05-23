@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { PenLine, Bitcoin } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import WalletConnect from '@/components/WalletConnect';
+import { useWallet } from '@/contexts/WalletContext';
 import {
   Sheet,
   SheetContent,
@@ -12,6 +13,7 @@ import {
 
 const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { isConnected } = useWallet();
 
   return (
     <header className="relative z-50">
@@ -41,22 +43,30 @@ const Navbar = () => {
           <Link to="/faq" className="text-white/80 hover:text-white transition-colors">
             FAQ
           </Link>
-          <Sheet>
-            <SheetTrigger asChild>
-              <Button variant="outline" className="ml-4 border-skrypto-purple text-white bg-transparent hover:bg-skrypto-purple/20 flex items-center gap-2">
-                Connect Wallet
-              </Button>
-            </SheetTrigger>
-            <SheetContent className="glass border-white/10">
-              <div className="flex flex-col items-center justify-center h-full space-y-8">
-                <h2 className="text-2xl font-bold text-white">Connect Your Wallet</h2>
-                <p className="text-white/70 text-center mb-4">
-                  Connect your wallet to access all features on Skrypto
-                </p>
-                <WalletConnect />
-              </div>
-            </SheetContent>
-          </Sheet>
+          
+          {/* Desktop wallet connection */}
+          <div className="ml-4">
+            {isConnected ? (
+              <WalletConnect />
+            ) : (
+              <Sheet>
+                <SheetTrigger asChild>
+                  <Button variant="outline" className="border-skrypto-purple text-white bg-transparent hover:bg-skrypto-purple/20 flex items-center gap-2">
+                    Connect Wallet
+                  </Button>
+                </SheetTrigger>
+                <SheetContent className="glass border-white/10">
+                  <div className="flex flex-col items-center justify-center h-full space-y-8">
+                    <h2 className="text-2xl font-bold text-white">Connect Your Wallet</h2>
+                    <p className="text-white/70 text-center mb-4">
+                      Connect your wallet to access all features on Skrypto
+                    </p>
+                    <WalletConnect />
+                  </div>
+                </SheetContent>
+              </Sheet>
+            )}
+          </div>
         </div>
 
         {/* Mobile menu button */}

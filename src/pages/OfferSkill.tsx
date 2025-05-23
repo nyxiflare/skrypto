@@ -1,16 +1,16 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import OfferSkillForm from '@/components/offer/OfferSkillForm';
 import { Button } from "@/components/ui/button";
 import WalletConnect from '@/components/WalletConnect';
 import { useNavigate } from 'react-router-dom';
+import { useWallet } from '@/contexts/WalletContext';
 
 const OfferSkill = () => {
   const navigate = useNavigate();
-  // Mock wallet connection state - in a real app, this would come from a context
-  const [connected, setConnected] = useState(false);
+  const { isConnected } = useWallet();
 
   return (
     <div className="min-h-screen bg-skrypto-dark">
@@ -27,7 +27,7 @@ const OfferSkill = () => {
           </p>
         </div>
 
-        {connected ? (
+        {isConnected ? (
           <OfferSkillForm />
         ) : (
           <div className="glass p-8 rounded-xl max-w-2xl mx-auto text-center">

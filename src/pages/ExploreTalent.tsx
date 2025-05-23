@@ -9,17 +9,11 @@ import { Button } from "@/components/ui/button";
 import { Briefcase, Pen } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import WalletConnect from '@/components/WalletConnect';
-
-// Mock wallet connection state
-const useWalletConnection = () => {
-  // In a real application, this would be connected to an actual wallet
-  const [connected, setConnected] = useState(false);
-  return { connected, setConnected };
-};
+import { useWallet } from '@/contexts/WalletContext';
 
 const ExploreTalent = () => {
   const navigate = useNavigate();
-  const { connected } = useWalletConnection();
+  const { isConnected } = useWallet();
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
   const [selectedToken, setSelectedToken] = useState<string>('all');
@@ -33,7 +27,7 @@ const ExploreTalent = () => {
 
         <div className="flex flex-col md:flex-row justify-between items-center gap-6 mb-10">
           <div className="w-full md:w-auto flex gap-4">
-            {connected ? (
+            {isConnected ? (
               <>
                 <Button 
                   className="bg-skrypto-purple hover:bg-skrypto-purple/90 text-white glow-purple flex items-center gap-2"

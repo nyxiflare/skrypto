@@ -9,6 +9,7 @@ import NotFound from "./pages/NotFound";
 import ExploreTalent from "./pages/ExploreTalent";
 import OfferSkill from "./pages/OfferSkill";
 import UserProfile from "./pages/UserProfile";
+import { WalletProvider } from "./contexts/WalletContext";
 
 const queryClient = new QueryClient();
 
@@ -17,18 +18,20 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <BrowserRouter>
-        <div className="min-h-screen flex flex-col">
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/explore" element={<ExploreTalent />} />
-            <Route path="/offer-skill" element={<OfferSkill />} />
-            <Route path="/profile/:username" element={<UserProfile />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </div>
-      </BrowserRouter>
+      <WalletProvider>
+        <BrowserRouter>
+          <div className="min-h-screen flex flex-col">
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/explore" element={<ExploreTalent />} />
+              <Route path="/offer-skill" element={<OfferSkill />} />
+              <Route path="/profile/:username" element={<UserProfile />} />
+              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </div>
+        </BrowserRouter>
+      </WalletProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );

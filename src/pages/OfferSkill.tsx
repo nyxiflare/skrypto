@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import OfferSkillForm from '@/components/offer/OfferSkillForm';
@@ -7,15 +7,10 @@ import { Button } from "@/components/ui/button";
 import WalletConnect from '@/components/WalletConnect';
 import { useNavigate } from 'react-router-dom';
 
-// Mock wallet connection state - would be replaced with actual wallet connection
-const useWalletConnection = () => {
-  const [connected, setConnected] = React.useState(false);
-  return { connected, setConnected };
-};
-
 const OfferSkill = () => {
   const navigate = useNavigate();
-  const { connected } = useWalletConnection();
+  // Mock wallet connection state - in a real app, this would come from a context
+  const [connected, setConnected] = useState(false);
 
   return (
     <div className="min-h-screen bg-skrypto-dark">

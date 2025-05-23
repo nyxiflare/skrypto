@@ -31,16 +31,16 @@ const ProfileSidebar = ({ user }: ProfileSidebarProps) => {
     <Sidebar variant="inset">
       <SidebarHeader className="flex flex-col items-center justify-center py-6">
         <Avatar className="h-24 w-24 mb-4">
-          <AvatarImage src={user.avatar} alt={user.username} />
+          <AvatarImage src={user.avatarUrl} alt={user.username} />
           <AvatarFallback className="bg-skrypto-purple/20 text-2xl">
             {user.username.substring(0, 2).toUpperCase()}
           </AvatarFallback>
         </Avatar>
         <h3 className="text-xl font-bold text-white">{user.username}</h3>
-        <p className="text-white/60 text-sm">{user.title}</p>
+        <p className="text-white/60 text-sm">{user.skills[0]}</p>
         
         <div className="flex items-center space-x-2 mt-3">
-          {user.isVerified && (
+          {user.rating >= 4.5 && (
             <Badge variant="secondary" className="bg-skrypto-purple/30">
               <BadgeCheck size={12} className="mr-1 text-skrypto-purple" />
               Verified
@@ -49,7 +49,7 @@ const ProfileSidebar = ({ user }: ProfileSidebarProps) => {
           
           <Badge variant="outline" className="border-white/10 text-white/70">
             <Star size={12} className="mr-1 text-yellow-500" />
-            5.0
+            {user.rating}
           </Badge>
         </div>
       </SidebarHeader>

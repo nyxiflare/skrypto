@@ -1,8 +1,14 @@
 
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
-import { Wallet, PenLine, Bitcoin } from 'lucide-react';
+import { PenLine, Bitcoin } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import WalletConnect from '@/components/WalletConnect';
+import {
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 
 const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -35,10 +41,22 @@ const Navbar = () => {
           <Link to="/faq" className="text-white/80 hover:text-white transition-colors">
             FAQ
           </Link>
-          <Button variant="outline" className="ml-4 border-skrypto-purple text-white bg-transparent hover:bg-skrypto-purple/20 flex items-center gap-2">
-            <Wallet size={16} />
-            Connect Wallet
-          </Button>
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button variant="outline" className="ml-4 border-skrypto-purple text-white bg-transparent hover:bg-skrypto-purple/20 flex items-center gap-2">
+                Connect Wallet
+              </Button>
+            </SheetTrigger>
+            <SheetContent className="glass border-white/10">
+              <div className="flex flex-col items-center justify-center h-full space-y-8">
+                <h2 className="text-2xl font-bold text-white">Connect Your Wallet</h2>
+                <p className="text-white/70 text-center mb-4">
+                  Connect your wallet to access all features on Skrypto
+                </p>
+                <WalletConnect />
+              </div>
+            </SheetContent>
+          </Sheet>
         </div>
 
         {/* Mobile menu button */}
@@ -110,10 +128,9 @@ const Navbar = () => {
           >
             FAQ
           </Link>
-          <Button variant="outline" className="w-full mt-2 mb-2 border-skrypto-purple text-white bg-transparent hover:bg-skrypto-purple/20 flex items-center justify-center gap-2">
-            <Wallet size={16} />
-            Connect Wallet
-          </Button>
+          <div className="py-2">
+            <WalletConnect />
+          </div>
         </div>
       )}
     </header>

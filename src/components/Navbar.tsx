@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { PenLine, Bitcoin } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import WalletConnect from '@/components/WalletConnect';
+import ProfileButton from '@/components/ProfileButton';
 import { useWallet } from '@/contexts/WalletContext';
 import {
   Sheet,
@@ -44,10 +45,13 @@ const Navbar = () => {
             FAQ
           </Link>
           
-          {/* Desktop wallet connection */}
-          <div className="ml-4">
+          {/* Desktop wallet connection and profile */}
+          <div className="ml-4 flex items-center gap-2">
             {isConnected ? (
-              <WalletConnect />
+              <>
+                <ProfileButton />
+                <WalletConnect />
+              </>
             ) : (
               <Sheet>
                 <SheetTrigger asChild>
@@ -138,7 +142,8 @@ const Navbar = () => {
           >
             FAQ
           </Link>
-          <div className="py-2">
+          <div className="py-2 flex flex-col gap-2">
+            {isConnected && <ProfileButton />}
             <WalletConnect />
           </div>
         </div>

@@ -9,7 +9,10 @@ import NotFound from "./pages/NotFound";
 import ExploreTalent from "./pages/ExploreTalent";
 import OfferSkill from "./pages/OfferSkill";
 import UserProfile from "./pages/UserProfile";
+import Onboarding from "./pages/Onboarding";
+import Dashboard from "./pages/Dashboard";
 import { WalletProvider } from "./contexts/WalletContext";
+import { ProfileProvider } from "./contexts/ProfileContext";
 
 const queryClient = new QueryClient();
 
@@ -19,18 +22,22 @@ const App = () => (
       <Toaster />
       <Sonner />
       <WalletProvider>
-        <BrowserRouter>
-          <div className="min-h-screen flex flex-col">
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/explore" element={<ExploreTalent />} />
-              <Route path="/offer-skill" element={<OfferSkill />} />
-              <Route path="/profile/:username" element={<UserProfile />} />
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </div>
-        </BrowserRouter>
+        <ProfileProvider>
+          <BrowserRouter>
+            <div className="min-h-screen flex flex-col">
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/explore" element={<ExploreTalent />} />
+                <Route path="/offer-skill" element={<OfferSkill />} />
+                <Route path="/profile/:username" element={<UserProfile />} />
+                <Route path="/onboarding" element={<Onboarding />} />
+                <Route path="/dashboard" element={<Dashboard />} />
+                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </div>
+          </BrowserRouter>
+        </ProfileProvider>
       </WalletProvider>
     </TooltipProvider>
   </QueryClientProvider>

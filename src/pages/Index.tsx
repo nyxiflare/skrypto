@@ -21,7 +21,7 @@ const Index = () => {
         <FaqSection />
         
         {/* CTA Section */}
-        <section className="py-20 px-4 relative overflow-hidden">
+        <section className="py-20 px-4 relative overflow-hidden" id="connect-wallet">
           {/* Background elements */}
           <div className="absolute top-0 right-0 w-full h-full bg-gradient-to-b from-skrypto-purple/10 to-transparent"></div>
           

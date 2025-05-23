@@ -1,8 +1,27 @@
 
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
+import { Link } from 'react-router-dom';
+import { useWallet } from '@/contexts/WalletContext';
+import { useProfile } from '@/contexts/ProfileContext';
 
 const HeroSection = () => {
+  const { isConnected } = useWallet();
+  const { profile } = useProfile();
+  
+  const getStartedLink = isConnected ? 
+    (profile ? '/dashboard' : '/onboarding') : 
+    '#connect-wallet';
+  
+  const handleGetStarted = () => {
+    if (!isConnected) {
+      const walletElement = document.querySelector('#connect-wallet');
+      if (walletElement) {
+        walletElement.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+  };
+  
   return (
     <section className="py-16 md:py-28 px-4 relative overflow-hidden">
       {/* Background elements */}
@@ -23,13 +42,27 @@ const HeroSection = () => {
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button className="bg-skrypto-purple hover:bg-skrypto-purple/90 text-white px-6 py-6 text-lg glow-purple flex items-center gap-2">
-              Get Started
-              <ArrowRight size={18} />
-            </Button>
-            <Button variant="outline" className="border-skrypto-blue text-white bg-transparent hover:bg-skrypto-blue/20 px-6 py-6 text-lg">
-              Browse Gigs
-            </Button>
+            {isConnected ? (
+              <Link to={getStartedLink}>
+                <Button className="bg-skrypto-purple hover:bg-skrypto-purple/90 text-white px-6 py-6 text-lg glow-purple flex items-center gap-2">
+                  Get Started
+                  <ArrowRight size={18} />
+                </Button>
+              </Link>
+            ) : (
+              <Button 
+                onClick={handleGetStarted} 
+                className="bg-skrypto-purple hover:bg-skrypto-purple/90 text-white px-6 py-6 text-lg glow-purple flex items-center gap-2"
+              >
+                Get Started
+                <ArrowRight size={18} />
+              </Button>
+            )}
+            <Link to="/explore">
+              <Button variant="outline" className="border-skrypto-blue text-white bg-transparent hover:bg-skrypto-blue/20 px-6 py-6 text-lg">
+                Browse Gigs
+              </Button>
+            </Link>
           </div>
         </div>
         

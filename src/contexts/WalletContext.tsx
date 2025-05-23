@@ -38,7 +38,7 @@ export const WalletProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   // Connect wallet and sign authentication message
-  const connect = async (injectedProvider?: ethers.providers.Web3Provider) => {
+  const connect = async (injectedProvider?: ethers.providers.Web3Provider): Promise<void> => {
     try {
       let web3Provider: ethers.providers.Web3Provider;
       
@@ -81,8 +81,6 @@ export const WalletProvider = ({ children }: { children: ReactNode }) => {
         title: "Wallet Connected",
         description: `${walletAddress.substring(0, 6)}...${walletAddress.substring(walletAddress.length - 4)}`,
       });
-
-      return walletAddress;
     } catch (error) {
       console.error("Error connecting wallet:", error);
       toast({

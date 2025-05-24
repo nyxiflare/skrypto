@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Button } from "@/components/ui/button";
-import { UserRound, Settings, Inbox, Bell, LogOut, BarChart, Briefcase, DollarSign } from 'lucide-react';
+import { UserRound, Settings, Inbox, Bell, LogOut, BarChart, Briefcase, DollarSign, Home } from 'lucide-react';
 import { useProfile } from '@/contexts/ProfileContext';
 import { useWallet } from '@/contexts/WalletContext';
 import {
@@ -55,7 +55,7 @@ const ProfileButton = () => {
           <span className="hidden sm:inline">{profile.username}</span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-56 glass border-white/10">
+      <DropdownMenuContent className="w-56 glass border-white/10 bg-gray-900/95 backdrop-blur-sm">
         <DropdownMenuLabel className="text-white">{profile.username}</DropdownMenuLabel>
         <DropdownMenuSeparator className="bg-white/10" />
         
@@ -80,18 +80,6 @@ const ProfileButton = () => {
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem className="text-white/80 hover:text-white hover:bg-white/5">
-          <Link to="/analytics" className="flex items-center w-full">
-            <BarChart className="mr-2" size={16} />
-            <span>Analytics</span>
-          </Link>
-        </DropdownMenuItem>
-        <DropdownMenuItem className="text-white/80 hover:text-white hover:bg-white/5">
-          <Link to="/settings" className="flex items-center w-full">
-            <Settings className="mr-2" size={16} />
-            <span>Settings</span>
-          </Link>
-        </DropdownMenuItem>
-        <DropdownMenuItem className="text-white/80 hover:text-white hover:bg-white/5">
           <Link to="/inbox" className="flex items-center w-full">
             <Inbox className="mr-2" size={16} />
             <span>Inbox</span>
@@ -101,6 +89,18 @@ const ProfileButton = () => {
           <Link to="/notifications" className="flex items-center w-full">
             <Bell className="mr-2" size={16} />
             <span>Notifications</span>
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem className="text-white/80 hover:text-white hover:bg-white/5">
+          <Link to="/analytics" className="flex items-center w-full">
+            <BarChart className="mr-2" size={16} />
+            <span>Analytics</span>
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem className="text-white/80 hover:text-white hover:bg-white/5">
+          <Link to="/settings" className="flex items-center w-full">
+            <Settings className="mr-2" size={16} />
+            <span>Settings</span>
           </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator className="bg-white/10" />

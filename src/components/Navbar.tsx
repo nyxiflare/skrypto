@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Bitcoin } from 'lucide-react';
@@ -40,6 +39,13 @@ const Navbar = () => {
           <Link to="/faq" className="text-white/80 hover:text-white transition-colors">
             FAQ
           </Link>
+          
+          {/* Add Membership link for logged-in users */}
+          {isConnected && (
+            <Link to="/membership" className="text-white/80 hover:text-white transition-colors">
+              Membership
+            </Link>
+          )}
           
           {/* Desktop wallet connection and profile */}
           <div className="ml-4 flex items-center gap-2">
@@ -130,6 +136,15 @@ const Navbar = () => {
           >
             FAQ
           </Link>
+          {isConnected && (
+            <Link
+              to="/membership"
+              className="block py-2 text-white/80 hover:text-white"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Membership
+            </Link>
+          )}
           <div className="py-2 flex flex-col gap-2">
             {isConnected && <ProfileButton />}
             <WalletConnect />

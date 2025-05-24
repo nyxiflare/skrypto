@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import BackButton from '@/components/BackButton';
 import { useProfile } from '@/contexts/ProfileContext';
 import { useWallet } from '@/contexts/WalletContext';
 import { useNavigate } from 'react-router-dom';
@@ -11,7 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
-import { ArrowLeft, Calendar, DollarSign } from 'lucide-react';
+import { Calendar, DollarSign } from 'lucide-react';
 import { skillCategories } from '@/contexts/ProfileContext';
 
 const PostJob = () => {
@@ -37,9 +38,17 @@ const PostJob = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Submit job posting
-    console.log('Job posted:', formData);
-    navigate('/post-job-success');
+    // Navigate to success page with job data
+    navigate('/post-job-success', { 
+      state: { 
+        jobData: {
+          title: formData.title,
+          budget: `$${formData.budget[0]}`,
+          deadline: formData.deadline,
+          id: `JOB${Math.floor(Math.random() * 10000)}`
+        }
+      }
+    });
   };
 
   const toggleSkill = (skill: string) => {
@@ -61,15 +70,7 @@ const PostJob = () => {
       <main className="container mx-auto px-4 py-8">
         <div className="max-w-3xl mx-auto">
           <div className="flex items-center gap-4 mb-8">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => navigate(-1)}
-              className="text-white hover:bg-white/10"
-            >
-              <ArrowLeft size={16} className="mr-2" />
-              Back
-            </Button>
+            <BackButton />
             <h1 className="text-3xl font-bold text-gradient-purple">Post a New Job</h1>
           </div>
 

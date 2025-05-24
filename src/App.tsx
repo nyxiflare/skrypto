@@ -19,6 +19,8 @@ import AuthenticatedHome from "./pages/AuthenticatedHome";
 import PostJob from "./pages/PostJob";
 import PostJobSuccess from "./pages/PostJobSuccess";
 import Connect from "./pages/Connect";
+import Membership from "./pages/Membership";
+import ProtectedRoute from "./components/ProtectedRoute";
 import { WalletProvider } from "./contexts/WalletContext";
 import { ProfileProvider } from "./contexts/ProfileContext";
 
@@ -36,18 +38,63 @@ const App = () => (
               <Routes>
                 <Route path="/" element={<Index />} />
                 <Route path="/connect" element={<Connect />} />
-                <Route path="/home" element={<AuthenticatedHome />} />
+                <Route path="/home" element={
+                  <ProtectedRoute requiresProfile>
+                    <AuthenticatedHome />
+                  </ProtectedRoute>
+                } />
                 <Route path="/explore" element={<ExploreTalent />} />
-                <Route path="/offer-skill" element={<OfferSkill />} />
-                <Route path="/post-job" element={<PostJob />} />
-                <Route path="/post-job-success" element={<PostJobSuccess />} />
+                <Route path="/offer-skill" element={
+                  <ProtectedRoute guestRestricted>
+                    <OfferSkill />
+                  </ProtectedRoute>
+                } />
+                <Route path="/post-job" element={
+                  <ProtectedRoute requiresProfile guestRestricted>
+                    <PostJob />
+                  </ProtectedRoute>
+                } />
+                <Route path="/post-job-success" element={
+                  <ProtectedRoute requiresProfile>
+                    <PostJobSuccess />
+                  </ProtectedRoute>
+                } />
+                <Route path="/membership" element={
+                  <ProtectedRoute requiresProfile>
+                    <Membership />
+                  </ProtectedRoute>
+                } />
                 <Route path="/profile/:username" element={<UserProfile />} />
-                <Route path="/onboarding" element={<Onboarding />} />
-                <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/analytics" element={<Analytics />} />
-                <Route path="/settings" element={<Settings />} />
-                <Route path="/inbox" element={<Inbox />} />
-                <Route path="/notifications" element={<Notifications />} />
+                <Route path="/onboarding" element={
+                  <ProtectedRoute>
+                    <Onboarding />
+                  </ProtectedRoute>
+                } />
+                <Route path="/dashboard" element={
+                  <ProtectedRoute requiresProfile>
+                    <Dashboard />
+                  </ProtectedRoute>
+                } />
+                <Route path="/analytics" element={
+                  <ProtectedRoute requiresProfile>
+                    <Analytics />
+                  </ProtectedRoute>
+                } />
+                <Route path="/settings" element={
+                  <ProtectedRoute requiresProfile>
+                    <Settings />
+                  </ProtectedRoute>
+                } />
+                <Route path="/inbox" element={
+                  <ProtectedRoute requiresProfile>
+                    <Inbox />
+                  </ProtectedRoute>
+                } />
+                <Route path="/notifications" element={
+                  <ProtectedRoute requiresProfile>
+                    <Notifications />
+                  </ProtectedRoute>
+                } />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>

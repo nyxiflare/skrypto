@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import BackButton from '@/components/BackButton';
 import { useProfile } from '@/contexts/ProfileContext';
 import { useWallet } from '@/contexts/WalletContext';
 import { useNavigate } from 'react-router-dom';
@@ -23,21 +24,30 @@ const Onboarding = () => {
   const { isConnected } = useWallet();
   const { profile, isOnboarding, startOnboarding, completeOnboarding } = useProfile();
   const navigate = useNavigate();
-  const [currentStep, setCurrentStep] = useState<OnboardingStep>(OnboardingStep.ProfileType);
+  const [currentStep, setCurrentStep] = useState<OnboardingStep>(OnboardingStep.UserInfo);
 
   React.useEffect(() => {
     if (!isConnected) {
       navigate('/');
     }
-  }, [isConnected, navigate]);
+    
+    // Check if role was already selected from /connect page
+    const selectedRole = localStorage.getItem('selectedRole');
+    if (selectedRole && !profile?.profileType) {
+      startOnboarding(selectedRole as "hire" | "earn" | "fun");
+    }
+  }, [isConnected, navigate, profile?.profileType, startOnboarding]);
+
+  const handleStepBack = () => {
+    if (currentStep === OnboardingStep.UserInfo) {
+      navigate('/connect');
+    } else {
+      setCurrentStep(currentStep - 1);
+    }
+  };
 
   const renderStep = () => {
     switch (currentStep) {
-      case OnboardingStep.ProfileType:
-        return <OnboardingProfileType onNext={(type) => {
-          startOnboarding(type);
-          setCurrentStep(OnboardingStep.UserInfo);
-        }} />;
       case OnboardingStep.UserInfo:
         return <OnboardingUserInfo onNext={() => setCurrentStep(OnboardingStep.IdVerification)} />;
       case OnboardingStep.IdVerification:
@@ -47,13 +57,10 @@ const Onboarding = () => {
       case OnboardingStep.Terms:
         return <OnboardingTerms onComplete={() => {
           completeOnboarding();
-          navigate('/dashboard');
+          navigate('/home');
         }} />;
       default:
-        return <OnboardingProfileType onNext={(type) => {
-          startOnboarding(type);
-          setCurrentStep(OnboardingStep.UserInfo);
-        }} />;
+        return <OnboardingUserInfo onNext={() => setCurrentStep(OnboardingStep.IdVerification)} />;
     }
   };
 
@@ -62,9 +69,12 @@ const Onboarding = () => {
       <Navbar />
       <main className="container mx-auto px-4 py-12">
         <div className="max-w-2xl mx-auto">
-          <h1 className="text-3xl md:text-4xl font-bold mb-8 text-center">
-            <span className="text-gradient-purple">Create Your Profile</span>
-          </h1>
+          <div className="flex items-center gap-4 mb-8">
+            <BackButton onClick={handleStepBack} />
+            <h1 className="text-3xl md:text-4xl font-bold">
+              <span className="text-gradient-purple">Create Your Profile</span>
+            </h1>
+          </div>
           
           <div className="glass p-8 rounded-xl">
             {renderStep()}
@@ -72,10 +82,10 @@ const Onboarding = () => {
           
           <div className="mt-8 flex justify-center">
             <div className="flex gap-2">
-              {[...Array(5)].map((_, idx) => (
+              {[...Array(4)].map((_, idx) => (
                 <div 
                   key={idx}
-                  className={`h-2 w-12 rounded-full ${idx === currentStep ? 'bg-skrypto-purple' : 'bg-white/20'}`}
+                  className={`h-2 w-12 rounded-full ${idx === currentStep - 1 ? 'bg-skrypto-purple' : 'bg-white/20'}`}
                 />
               ))}
             </div>

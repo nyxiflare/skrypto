@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useWallet } from '@/contexts/WalletContext';
+import BackButton from '@/components/BackButton';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import WalletConnect from '@/components/WalletConnect';
@@ -53,6 +54,10 @@ const Connect = () => {
   return (
     <div className="min-h-screen bg-skrypto-dark flex items-center justify-center p-4">
       <div className="max-w-2xl w-full">
+        <div className="mb-6">
+          <BackButton to="/" />
+        </div>
+        
         {step === 'connect' ? (
           <Card className="glass border-white/10">
             <CardHeader className="text-center">

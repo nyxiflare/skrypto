@@ -12,6 +12,9 @@ import UserProfile from "./pages/UserProfile";
 import Onboarding from "./pages/Onboarding";
 import Dashboard from "./pages/Dashboard";
 import Analytics from "./pages/Analytics";
+import Settings from "./pages/Settings";
+import Inbox from "./pages/Inbox";
+import Notifications from "./pages/Notifications";
 import { WalletProvider } from "./contexts/WalletContext";
 import { ProfileProvider } from "./contexts/ProfileContext";
 
@@ -34,6 +37,9 @@ const App = () => (
                 <Route path="/onboarding" element={<Onboarding />} />
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/analytics" element={<Analytics />} />
+                <Route path="/settings" element={<Settings />} />
+                <Route path="/inbox" element={<Inbox />} />
+                <Route path="/notifications" element={<Notifications />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>

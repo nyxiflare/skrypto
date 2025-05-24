@@ -28,9 +28,13 @@ const Dashboard = () => {
 
   // Determine which dashboard to show based on profile type
   const renderDashboard = () => {
-    if (profile.profileType === 'client') {
+    // Map the profile types to dashboard types
+    if (profile.profileType === 'hire') {
       return <ClientDashboard />;
+    } else if (profile.profileType === 'earn') {
+      return <FreelancerDashboard />;
     } else {
+      // For 'fun' profile type, show a limited dashboard
       return <FreelancerDashboard />;
     }
   };

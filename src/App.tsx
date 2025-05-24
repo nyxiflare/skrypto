@@ -15,6 +15,9 @@ import Analytics from "./pages/Analytics";
 import Settings from "./pages/Settings";
 import Inbox from "./pages/Inbox";
 import Notifications from "./pages/Notifications";
+import AuthenticatedHome from "./pages/AuthenticatedHome";
+import PostJob from "./pages/PostJob";
+import PostJobSuccess from "./pages/PostJobSuccess";
 import { WalletProvider } from "./contexts/WalletContext";
 import { ProfileProvider } from "./contexts/ProfileContext";
 
@@ -31,8 +34,11 @@ const App = () => (
             <div className="min-h-screen flex flex-col">
               <Routes>
                 <Route path="/" element={<Index />} />
+                <Route path="/home" element={<AuthenticatedHome />} />
                 <Route path="/explore" element={<ExploreTalent />} />
                 <Route path="/offer-skill" element={<OfferSkill />} />
+                <Route path="/post-job" element={<PostJob />} />
+                <Route path="/post-job-success" element={<PostJobSuccess />} />
                 <Route path="/profile/:username" element={<UserProfile />} />
                 <Route path="/onboarding" element={<Onboarding />} />
                 <Route path="/dashboard" element={<Dashboard />} />

@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import { Link } from 'react-router-dom';
@@ -10,7 +9,7 @@ const HeroSection = () => {
   const { profile } = useProfile();
   
   const getStartedLink = isConnected ? 
-    (profile ? '/dashboard' : '/onboarding') : 
+    (profile ? '/home' : '/onboarding') : 
     '#connect-wallet';
   
   const handleGetStarted = () => {

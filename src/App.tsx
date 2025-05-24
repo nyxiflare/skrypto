@@ -18,6 +18,7 @@ import Notifications from "./pages/Notifications";
 import AuthenticatedHome from "./pages/AuthenticatedHome";
 import PostJob from "./pages/PostJob";
 import PostJobSuccess from "./pages/PostJobSuccess";
+import Connect from "./pages/Connect";
 import { WalletProvider } from "./contexts/WalletContext";
 import { ProfileProvider } from "./contexts/ProfileContext";
 
@@ -34,6 +35,7 @@ const App = () => (
             <div className="min-h-screen flex flex-col">
               <Routes>
                 <Route path="/" element={<Index />} />
+                <Route path="/connect" element={<Connect />} />
                 <Route path="/home" element={<AuthenticatedHome />} />
                 <Route path="/explore" element={<ExploreTalent />} />
                 <Route path="/offer-skill" element={<OfferSkill />} />

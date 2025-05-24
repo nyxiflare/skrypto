@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
-import { Bitcoin, User } from 'lucide-react';
+import { Bitcoin } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import WalletConnect from '@/components/WalletConnect';
 import ProfileButton from '@/components/ProfileButton';
@@ -34,12 +34,6 @@ const Navbar = () => {
           <Link to="/explore" className="text-white/80 hover:text-white transition-colors">
             Explore Talent
           </Link>
-          {isConnected && (
-            <Link to="/dashboard" className="text-white/80 hover:text-white transition-colors flex items-center gap-1">
-              <User size={16} />
-              Dashboard
-            </Link>
-          )}
           <Link to="/about" className="text-white/80 hover:text-white transition-colors">
             About
           </Link>
@@ -122,16 +116,6 @@ const Navbar = () => {
           >
             Explore Talent
           </Link>
-          {isConnected && (
-            <Link
-              to="/dashboard"
-              className="block py-2 text-white/80 hover:text-white flex items-center gap-1"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              <User size={16} />
-              Dashboard
-            </Link>
-          )}
           <Link
             to="/about"
             className="block py-2 text-white/80 hover:text-white"

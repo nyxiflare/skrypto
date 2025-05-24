@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Button } from "@/components/ui/button";
-import { UserRound, Settings, Inbox, Bell, LogOut, BarChart } from 'lucide-react';
+import { UserRound, Settings, Inbox, Bell, LogOut, BarChart, Briefcase, DollarSign } from 'lucide-react';
 import { useProfile } from '@/contexts/ProfileContext';
 import { useWallet } from '@/contexts/WalletContext';
 import {
@@ -58,6 +58,21 @@ const ProfileButton = () => {
       <DropdownMenuContent className="w-56 glass border-white/10">
         <DropdownMenuLabel className="text-white">{profile.username}</DropdownMenuLabel>
         <DropdownMenuSeparator className="bg-white/10" />
+        
+        {/* Dashboard Links */}
+        <DropdownMenuItem className="text-white/80 hover:text-white hover:bg-white/5">
+          <Link to="/dashboard" className="flex items-center w-full">
+            {profile.profileType === 'hire' ? (
+              <Briefcase className="mr-2" size={16} />
+            ) : (
+              <DollarSign className="mr-2" size={16} />
+            )}
+            <span>Dashboard</span>
+          </Link>
+        </DropdownMenuItem>
+        
+        <DropdownMenuSeparator className="bg-white/10" />
+        
         <DropdownMenuItem className="text-white/80 hover:text-white hover:bg-white/5">
           <Link to={`/profile/${profile.username}`} className="flex items-center w-full">
             <UserRound className="mr-2" size={16} />

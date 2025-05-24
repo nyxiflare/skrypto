@@ -1,5 +1,7 @@
-
 import React from 'react';
+import { useWallet } from '@/contexts/WalletContext';
+import { useProfile } from '@/contexts/ProfileContext';
+import AuthenticatedHome from './AuthenticatedHome';
 import Navbar from '@/components/Navbar';
 import HeroSection from '@/components/HeroSection';
 import HowItWorksSection from '@/components/HowItWorksSection';
@@ -10,6 +12,15 @@ import Footer from '@/components/Footer';
 import WalletConnect from '@/components/WalletConnect';
 
 const Index = () => {
+  const { isConnected } = useWallet();
+  const { profile, isProfileComplete } = useProfile();
+
+  // If user is logged in and has completed profile, show authenticated home
+  if (isConnected && isProfileComplete && profile) {
+    return <AuthenticatedHome />;
+  }
+
+  // Otherwise show public homepage
   return (
     <div className="min-h-screen bg-skrypto-dark">
       <Navbar />

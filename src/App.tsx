@@ -11,6 +11,7 @@ import OfferSkill from "./pages/OfferSkill";
 import UserProfile from "./pages/UserProfile";
 import Onboarding from "./pages/Onboarding";
 import Dashboard from "./pages/Dashboard";
+import Analytics from "./pages/Analytics";
 import { WalletProvider } from "./contexts/WalletContext";
 import { ProfileProvider } from "./contexts/ProfileContext";
 
@@ -32,6 +33,7 @@ const App = () => (
                 <Route path="/profile/:username" element={<UserProfile />} />
                 <Route path="/onboarding" element={<Onboarding />} />
                 <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/analytics" element={<Analytics />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>

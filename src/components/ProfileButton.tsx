@@ -59,7 +59,7 @@ const ProfileButton = () => {
         <DropdownMenuLabel className="text-white">{profile.username}</DropdownMenuLabel>
         <DropdownMenuSeparator className="bg-white/10" />
         <DropdownMenuItem className="text-white/80 hover:text-white hover:bg-white/5">
-          <Link to="/profile" className="flex items-center w-full">
+          <Link to={`/profile/${profile.username}`} className="flex items-center w-full">
             <UserRound className="mr-2" size={16} />
             <span>My Profile</span>
           </Link>

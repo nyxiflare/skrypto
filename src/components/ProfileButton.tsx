@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Button } from "@/components/ui/button";
 import { UserRound, Settings, Inbox, Bell, LogOut, BarChart, Briefcase, DollarSign, Home } from 'lucide-react';
@@ -62,11 +61,7 @@ const ProfileButton = () => {
         {/* Dashboard Links */}
         <DropdownMenuItem className="text-white/80 hover:text-white hover:bg-white/5">
           <Link to="/dashboard" className="flex items-center w-full">
-            {profile.profileType === 'hire' ? (
-              <Briefcase className="mr-2" size={16} />
-            ) : (
-              <DollarSign className="mr-2" size={16} />
-            )}
+            <Home className="mr-2" size={16} />
             <span>Dashboard</span>
           </Link>
         </DropdownMenuItem>
@@ -74,7 +69,7 @@ const ProfileButton = () => {
         <DropdownMenuSeparator className="bg-white/10" />
         
         <DropdownMenuItem className="text-white/80 hover:text-white hover:bg-white/5">
-          <Link to={`/profile/${profile.username}`} className="flex items-center w-full">
+          <Link to="/dashboard/profile" className="flex items-center w-full">
             <UserRound className="mr-2" size={16} />
             <span>My Profile</span>
           </Link>
@@ -91,12 +86,14 @@ const ProfileButton = () => {
             <span>Notifications</span>
           </Link>
         </DropdownMenuItem>
-        <DropdownMenuItem className="text-white/80 hover:text-white hover:bg-white/5">
-          <Link to="/analytics" className="flex items-center w-full">
-            <BarChart className="mr-2" size={16} />
-            <span>Analytics</span>
-          </Link>
-        </DropdownMenuItem>
+        {profile.profileType === 'earn' && (
+          <DropdownMenuItem className="text-white/80 hover:text-white hover:bg-white/5">
+            <Link to="/dashboard/analytics" className="flex items-center w-full">
+              <BarChart className="mr-2" size={16} />
+              <span>Analytics</span>
+            </Link>
+          </DropdownMenuItem>
+        )}
         <DropdownMenuItem className="text-white/80 hover:text-white hover:bg-white/5">
           <Link to="/settings" className="flex items-center w-full">
             <Settings className="mr-2" size={16} />

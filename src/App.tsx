@@ -11,6 +11,8 @@ import OfferSkill from "./pages/OfferSkill";
 import UserProfile from "./pages/UserProfile";
 import Onboarding from "./pages/Onboarding";
 import Dashboard from "./pages/Dashboard";
+import DashboardProfile from "./pages/DashboardProfile";
+import DashboardAnalytics from "./pages/DashboardAnalytics";
 import Analytics from "./pages/Analytics";
 import Settings from "./pages/Settings";
 import Inbox from "./pages/Inbox";
@@ -73,6 +75,16 @@ const App = () => (
                 <Route path="/dashboard" element={
                   <ProtectedRoute requiresProfile>
                     <Dashboard />
+                  </ProtectedRoute>
+                } />
+                <Route path="/dashboard/profile" element={
+                  <ProtectedRoute requiresProfile>
+                    <DashboardProfile />
+                  </ProtectedRoute>
+                } />
+                <Route path="/dashboard/analytics" element={
+                  <ProtectedRoute requiresProfile freelancerOnly>
+                    <DashboardAnalytics />
                   </ProtectedRoute>
                 } />
                 <Route path="/analytics" element={

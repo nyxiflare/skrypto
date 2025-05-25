@@ -9,7 +9,124 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      memberships: {
+        Row: {
+          created_at: string | null
+          end_date: string | null
+          id: string
+          plan: string | null
+          start_date: string | null
+          status: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          end_date?: string | null
+          id?: string
+          plan?: string | null
+          start_date?: string | null
+          status?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          end_date?: string | null
+          id?: string
+          plan?: string | null
+          start_date?: string | null
+          status?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "memberships_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      skills: {
+        Row: {
+          category: string | null
+          created_at: string | null
+          description: string | null
+          id: string
+          rate: number | null
+          rate_type: string | null
+          skill_name: string
+          user_id: string | null
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          rate?: number | null
+          rate_type?: string | null
+          skill_name: string
+          user_id?: string | null
+        }
+        Update: {
+          category?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          rate?: number | null
+          rate_type?: string | null
+          skill_name?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "skills_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      users: {
+        Row: {
+          bio: string | null
+          created_at: string | null
+          email: string | null
+          email_verified: boolean | null
+          id: string
+          profile_image: string | null
+          profile_type: string | null
+          updated_at: string | null
+          username: string | null
+          wallet_address: string
+        }
+        Insert: {
+          bio?: string | null
+          created_at?: string | null
+          email?: string | null
+          email_verified?: boolean | null
+          id?: string
+          profile_image?: string | null
+          profile_type?: string | null
+          updated_at?: string | null
+          username?: string | null
+          wallet_address: string
+        }
+        Update: {
+          bio?: string | null
+          created_at?: string | null
+          email?: string | null
+          email_verified?: boolean | null
+          id?: string
+          profile_image?: string | null
+          profile_type?: string | null
+          updated_at?: string | null
+          username?: string | null
+          wallet_address?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

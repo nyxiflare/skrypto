@@ -2,6 +2,7 @@
 import React, { createContext, useState, useContext, ReactNode, useEffect } from 'react';
 import { ethers } from 'ethers';
 import { useToast } from "@/components/ui/use-toast";
+import { supabase } from '@/integrations/supabase/client';
 
 interface WalletContextType {
   address: string | null;
@@ -16,9 +17,6 @@ interface WalletContextType {
 
 const WalletContext = createContext<WalletContextType | undefined>(undefined);
 
-// Message to sign for authentication
-const AUTH_MESSAGE = "Sign this message to login to Skrypto and authenticate your wallet. This doesn't cost any gas.";
-
 export const WalletProvider = ({ children }: { children: ReactNode }) => {
   const [address, setAddress] = useState<string | null>(null);
   const [isConnected, setIsConnected] = useState<boolean>(false);
@@ -30,16 +28,60 @@ export const WalletProvider = ({ children }: { children: ReactNode }) => {
   // Check for existing wallet connection on mount
   useEffect(() => {
     const storedAddress = localStorage.getItem('walletAddress');
-    const storedSignature = localStorage.getItem('walletSignature');
-
-    if (storedAddress && storedSignature) {
-      // If we have stored wallet data, set the address but wait for actual connection
-      setAddress(storedAddress);
-      setIsConnected(true);
+    
+    if (storedAddress && window.ethereum) {
+      // Try to reconnect automatically
+      connect().catch(() => {
+        // If auto-reconnect fails, clear stored data
+        localStorage.removeItem('walletAddress');
+        localStorage.removeItem('walletSignature');
+      });
     }
   }, []);
 
-  // Connect wallet and sign authentication message
+  const fetchOrCreateUser = async (walletAddress: string) => {
+    try {
+      // Try to find existing user
+      const { data: existingUser, error: fetchError } = await supabase
+        .from('users')
+        .select('*')
+        .eq('wallet_address', walletAddress)
+        .single();
+
+      if (fetchError && fetchError.code !== 'PGRST116') {
+        throw fetchError;
+      }
+
+      if (existingUser) {
+        // Store user data in localStorage for persistence
+        localStorage.setItem('userData', JSON.stringify(existingUser));
+        console.log('Existing user found:', existingUser);
+        return existingUser;
+      } else {
+        // Create new user
+        const { data: newUser, error: createError } = await supabase
+          .from('users')
+          .insert([{ wallet_address: walletAddress }])
+          .select()
+          .single();
+
+        if (createError) throw createError;
+
+        localStorage.setItem('userData', JSON.stringify(newUser));
+        console.log('New user created:', newUser);
+        return newUser;
+      }
+    } catch (error) {
+      console.error('Error fetching/creating user:', error);
+      toast({
+        variant: "destructive",
+        title: "Database Error",
+        description: "Failed to load user data. Please try again.",
+      });
+      return null;
+    }
+  };
+
   const connect = async (injectedProvider?: ethers.providers.Web3Provider): Promise<void> => {
     setIsConnecting(true);
     try {
@@ -49,7 +91,6 @@ export const WalletProvider = ({ children }: { children: ReactNode }) => {
         web3Provider = injectedProvider;
       } else if (window.ethereum) {
         web3Provider = new ethers.providers.Web3Provider(window.ethereum);
-        // Request account access
         await web3Provider.send("eth_requestAccounts", []);
       } else {
         throw new Error("No wallet extension found. Please install MetaMask or another Web3 wallet.");
@@ -58,27 +99,17 @@ export const WalletProvider = ({ children }: { children: ReactNode }) => {
       const web3Signer = web3Provider.getSigner();
       const walletAddress = await web3Signer.getAddress();
 
-      // Get signature from local storage or request a new one
-      let signature = localStorage.getItem('walletSignature');
-      if (!signature) {
-        try {
-          signature = await web3Signer.signMessage(AUTH_MESSAGE);
-          // Save signature for future use
-          localStorage.setItem('walletSignature', signature);
-        } catch (error) {
-          console.error("User rejected signature", error);
-          throw new Error("Wallet signature is required for authentication. Please try again.");
-        }
-      }
-
-      // Save wallet address
-      localStorage.setItem('walletAddress', walletAddress);
-      
       // Update state
       setProvider(web3Provider);
       setSigner(web3Signer);
       setAddress(walletAddress);
       setIsConnected(true);
+
+      // Save wallet address
+      localStorage.setItem('walletAddress', walletAddress);
+
+      // Fetch or create user in database
+      await fetchOrCreateUser(walletAddress);
 
       toast({
         title: "Wallet Connected Successfully",
@@ -109,15 +140,18 @@ export const WalletProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  // Disconnect wallet
   const disconnect = () => {
     setAddress(null);
     setIsConnected(false);
     setProvider(null);
     setSigner(null);
     setIsConnecting(false);
+    
+    // Clear all stored data
     localStorage.removeItem('walletAddress');
     localStorage.removeItem('walletSignature');
+    localStorage.removeItem('userData');
+    localStorage.removeItem('selectedRole');
     
     toast({
       title: "Wallet Disconnected",
@@ -125,7 +159,6 @@ export const WalletProvider = ({ children }: { children: ReactNode }) => {
     });
   };
 
-  // Sign a message with the connected wallet
   const signMessage = async (message: string): Promise<string | null> => {
     if (!signer) {
       toast({

@@ -5,14 +5,14 @@ import { useProfile } from '@/contexts/ProfileContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Check, Wallet, Crown } from 'lucide-react';
+import { Check, Wallet, Crown, X } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import BackButton from '@/components/BackButton';
 import { useToast } from "@/components/ui/use-toast";
 
 const Membership = () => {
-  const { profile, updateProfile } = useProfile();
+  const { profile, updateMembership, cancelMembership } = useProfile();
   const navigate = useNavigate();
   const { toast } = useToast();
   const [selectedPlan, setSelectedPlan] = useState<string>('');
@@ -73,29 +73,8 @@ const Membership = () => {
       // Simulate payment processing
       await new Promise(resolve => setTimeout(resolve, 2000));
 
-      // Calculate end date based on selected plan
-      const now = new Date();
-      const endDate = new Date(now);
-      
-      const plan = membershipPlans.find(p => p.id === selectedPlan);
-      if (plan) {
-        const months = parseInt(plan.id.replace('months', ''));
-        endDate.setMonth(endDate.getMonth() + months);
-      }
-
-      // Update profile with active subscription
-      updateProfile({
-        subscription: {
-          active: true,
-          plan: selectedPlan as "monthly" | "9months" | "18months",
-          expiresAt: endDate.toISOString()
-        }
-      });
-
-      toast({
-        title: "Payment Successful!",
-        description: "Your membership has been activated successfully.",
-      });
+      // Update membership in database
+      await updateMembership(selectedPlan as "3months" | "9months" | "18months");
 
       // Redirect to dashboard after successful payment
       setTimeout(() => {
@@ -109,6 +88,19 @@ const Membership = () => {
         title: "Payment Failed",
         description: "There was an error processing your payment. Please try again.",
       });
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  const handleCancelMembership = async () => {
+    if (!confirm('Are you sure you want to cancel your membership?')) {
+      return;
+    }
+
+    setIsProcessing(true);
+    try {
+      await cancelMembership();
     } finally {
       setIsProcessing(false);
     }
@@ -137,17 +129,28 @@ const Membership = () => {
 
           {isActive && (
             <div className="mb-8 p-4 glass rounded-xl border border-skrypto-green/50">
-              <div className="flex items-center gap-3">
-                <Crown className="text-skrypto-green" size={24} />
-                <div>
-                  <h3 className="text-skrypto-green font-semibold">Membership Active</h3>
-                  <p className="text-white/70 text-sm">
-                    Your {currentPlan} plan is currently active
-                    {profile?.subscription?.expiresAt && (
-                      <span> until {new Date(profile.subscription.expiresAt).toLocaleDateString()}</span>
-                    )}
-                  </p>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <Crown className="text-skrypto-green" size={24} />
+                  <div>
+                    <h3 className="text-skrypto-green font-semibold">Membership Active</h3>
+                    <p className="text-white/70 text-sm">
+                      Your {currentPlan} plan is currently active
+                      {profile?.subscription?.expiresAt && (
+                        <span> until {new Date(profile.subscription.expiresAt).toLocaleDateString()}</span>
+                      )}
+                    </p>
+                  </div>
                 </div>
+                <Button
+                  onClick={handleCancelMembership}
+                  disabled={isProcessing}
+                  variant="outline"
+                  className="border-red-500 text-red-500 hover:bg-red-500/10"
+                >
+                  <X size={16} className="mr-2" />
+                  Cancel Subscription
+                </Button>
               </div>
             </div>
           )}
@@ -220,20 +223,22 @@ const Membership = () => {
             ))}
           </div>
 
-          <div className="text-center">
-            <Button
-              onClick={handlePayWithWallet}
-              disabled={!selectedPlan || isProcessing}
-              className="bg-skrypto-purple hover:bg-skrypto-purple/90 text-white px-8 py-6 text-lg glow-purple flex items-center gap-3 mx-auto"
-            >
-              <Wallet size={20} />
-              {isProcessing ? 'Processing Payment...' : 'Pay with Wallet'}
-            </Button>
-            
-            <p className="text-white/60 text-sm mt-4">
-              Secure payment via your connected wallet
-            </p>
-          </div>
+          {!isActive && (
+            <div className="text-center">
+              <Button
+                onClick={handlePayWithWallet}
+                disabled={!selectedPlan || isProcessing}
+                className="bg-skrypto-purple hover:bg-skrypto-purple/90 text-white px-8 py-6 text-lg glow-purple flex items-center gap-3 mx-auto"
+              >
+                <Wallet size={20} />
+                {isProcessing ? 'Processing Payment...' : 'Pay with Wallet'}
+              </Button>
+              
+              <p className="text-white/60 text-sm mt-4">
+                Secure payment via your connected wallet
+              </p>
+            </div>
+          )}
 
           {!isActive && (
             <div className="mt-12 p-6 glass rounded-xl border border-yellow-500/30">

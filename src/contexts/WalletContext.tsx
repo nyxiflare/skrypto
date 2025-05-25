@@ -11,6 +11,7 @@ interface WalletContextType {
   connect: (provider?: ethers.providers.Web3Provider) => Promise<void>;
   disconnect: () => void;
   signMessage: (message: string) => Promise<string | null>;
+  isConnecting: boolean;
 }
 
 const WalletContext = createContext<WalletContextType | undefined>(undefined);
@@ -23,6 +24,7 @@ export const WalletProvider = ({ children }: { children: ReactNode }) => {
   const [isConnected, setIsConnected] = useState<boolean>(false);
   const [provider, setProvider] = useState<ethers.providers.Web3Provider | null>(null);
   const [signer, setSigner] = useState<ethers.Signer | null>(null);
+  const [isConnecting, setIsConnecting] = useState<boolean>(false);
   const { toast } = useToast();
 
   // Check for existing wallet connection on mount
@@ -39,6 +41,7 @@ export const WalletProvider = ({ children }: { children: ReactNode }) => {
 
   // Connect wallet and sign authentication message
   const connect = async (injectedProvider?: ethers.providers.Web3Provider): Promise<void> => {
+    setIsConnecting(true);
     try {
       let web3Provider: ethers.providers.Web3Provider;
       
@@ -49,7 +52,7 @@ export const WalletProvider = ({ children }: { children: ReactNode }) => {
         // Request account access
         await web3Provider.send("eth_requestAccounts", []);
       } else {
-        throw new Error("No Ethereum browser extension detected");
+        throw new Error("No wallet extension found. Please install MetaMask or another Web3 wallet.");
       }
 
       const web3Signer = web3Provider.getSigner();
@@ -64,7 +67,7 @@ export const WalletProvider = ({ children }: { children: ReactNode }) => {
           localStorage.setItem('walletSignature', signature);
         } catch (error) {
           console.error("User rejected signature", error);
-          throw new Error("Authentication requires signature");
+          throw new Error("Wallet signature is required for authentication. Please try again.");
         }
       }
 
@@ -78,17 +81,31 @@ export const WalletProvider = ({ children }: { children: ReactNode }) => {
       setIsConnected(true);
 
       toast({
-        title: "Wallet Connected",
-        description: `${walletAddress.substring(0, 6)}...${walletAddress.substring(walletAddress.length - 4)}`,
+        title: "Wallet Connected Successfully",
+        description: `Connected to ${walletAddress.substring(0, 6)}...${walletAddress.substring(walletAddress.length - 4)}`,
       });
     } catch (error) {
       console.error("Error connecting wallet:", error);
+      let errorMessage = "Wallet connection failed. Please try again.";
+      
+      if (error instanceof Error) {
+        if (error.message.includes("User rejected")) {
+          errorMessage = "Connection cancelled. Please accept the wallet connection to continue.";
+        } else if (error.message.includes("No wallet")) {
+          errorMessage = "No wallet found. Please install MetaMask or another Web3 wallet.";
+        } else {
+          errorMessage = error.message;
+        }
+      }
+      
       toast({
         variant: "destructive",
         title: "Connection Failed",
-        description: error instanceof Error ? error.message : "Could not connect wallet",
+        description: errorMessage,
       });
       throw error;
+    } finally {
+      setIsConnecting(false);
     }
   };
 
@@ -98,6 +115,7 @@ export const WalletProvider = ({ children }: { children: ReactNode }) => {
     setIsConnected(false);
     setProvider(null);
     setSigner(null);
+    setIsConnecting(false);
     localStorage.removeItem('walletAddress');
     localStorage.removeItem('walletSignature');
     
@@ -126,7 +144,7 @@ export const WalletProvider = ({ children }: { children: ReactNode }) => {
       toast({
         variant: "destructive",
         title: "Signature Failed",
-        description: "Failed to sign message with wallet",
+        description: "Failed to sign message with wallet. Please try again.",
       });
       return null;
     }
@@ -140,7 +158,8 @@ export const WalletProvider = ({ children }: { children: ReactNode }) => {
       signer, 
       connect, 
       disconnect, 
-      signMessage 
+      signMessage,
+      isConnecting
     }}>
       {children}
     </WalletContext.Provider>

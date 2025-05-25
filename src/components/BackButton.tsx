@@ -8,13 +8,16 @@ interface BackButtonProps {
   to?: string;
   className?: string;
   children?: React.ReactNode;
+  onClick?: () => void;
 }
 
-const BackButton = ({ to, className = "", children }: BackButtonProps) => {
+const BackButton = ({ to, className = "", children, onClick }: BackButtonProps) => {
   const navigate = useNavigate();
 
   const handleBack = () => {
-    if (to) {
+    if (onClick) {
+      onClick();
+    } else if (to) {
       navigate(to);
     } else {
       navigate(-1);

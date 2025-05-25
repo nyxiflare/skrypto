@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Wallet, LogOut, CheckCircle } from "lucide-react";
 import { useWallet } from '@/contexts/WalletContext';
@@ -14,8 +14,7 @@ import { ethers } from 'ethers';
 
 const WalletConnect = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
-  const { address, isConnected, connect, disconnect } = useWallet();
-  const [isConnecting, setIsConnecting] = useState(false);
+  const { address, isConnected, connect, disconnect, isConnecting } = useWallet();
 
   const walletOptions = [
     {
@@ -45,7 +44,6 @@ const WalletConnect = () => {
   ];
 
   const connectWallet = async (walletName: string, type: string) => {
-    setIsConnecting(true);
     try {
       // For now, we only support injected wallets like MetaMask
       if (type === "injected" && window.ethereum) {
@@ -57,9 +55,8 @@ const WalletConnect = () => {
         // In a real app, we would handle different wallet types
       }
     } catch (error) {
+      // Error handling is now done in the WalletContext
       console.error(`Error connecting to ${walletName}:`, error);
-    } finally {
-      setIsConnecting(false);
     }
   };
 
@@ -111,7 +108,7 @@ const WalletConnect = () => {
             {walletOptions.map((wallet) => (
               <button
                 key={wallet.name}
-                className="flex items-center p-3 rounded-lg transition-colors hover:bg-white/5 border border-white/10"
+                className="flex items-center p-3 rounded-lg transition-colors hover:bg-white/5 border border-white/10 disabled:opacity-50"
                 onClick={() => connectWallet(wallet.name, wallet.type)}
                 disabled={isConnecting}
               >

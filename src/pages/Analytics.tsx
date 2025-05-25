@@ -1,240 +1,293 @@
 
-import React, { useState } from 'react';
+import React from 'react';
+import { useProfile } from '@/contexts/ProfileContext';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-import { useProfile } from '@/contexts/ProfileContext';
-import { useWallet } from '@/contexts/WalletContext';
-import { useNavigate } from 'react-router-dom';
-import {
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-} from "@/components/ui/chart";
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  BarChart,
-  Bar,
-  PieChart,
-  Pie,
-  Cell,
-  ResponsiveContainer,
-} from 'recharts';
+import BackButton from '@/components/BackButton';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from 'recharts';
+import { TrendingUp, DollarSign, Users, Star, Clock, Briefcase } from 'lucide-react';
 
 const Analytics = () => {
-  const { isConnected } = useWallet();
-  const { profile, isProfileComplete } = useProfile();
-  const navigate = useNavigate();
-  const [timeFilter, setTimeFilter] = useState('30days');
+  const { profile } = useProfile();
 
-  React.useEffect(() => {
-    if (!isConnected) {
-      navigate('/');
+  // Mock data - replace with real data from your backend
+  const earningsData = [
+    { month: 'Jan', freelancer: 2400, client: 1200 },
+    { month: 'Feb', freelancer: 1398, client: 2100 },
+    { month: 'Mar', freelancer: 9800, client: 1800 },
+    { month: 'Apr', freelancer: 3908, client: 2800 },
+    { month: 'May', freelancer: 4800, client: 1900 },
+    { month: 'Jun', freelancer: 3800, client: 2400 },
+  ];
+
+  const skillsData = [
+    { name: 'Web Development', value: 35, color: '#8B5CF6' },
+    { name: 'Design', value: 25, color: '#06D6A0' },
+    { name: 'Writing', value: 20, color: '#FFD60A' },
+    { name: 'Marketing', value: 20, color: '#F72585' },
+  ];
+
+  const isClient = profile?.profileType === 'hire';
+  const isFreelancer = profile?.profileType === 'earn';
+
+  const getStatsForUserType = () => {
+    if (isClient) {
+      return [
+        {
+          title: "Total Spent",
+          value: "$12,345",
+          icon: DollarSign,
+          trend: "+12%",
+          color: "text-red-400"
+        },
+        {
+          title: "Jobs Posted",
+          value: "24",
+          icon: Briefcase,
+          trend: "+3",
+          color: "text-blue-400"
+        },
+        {
+          title: "Active Projects",
+          value: "8",
+          icon: Clock,
+          trend: "+2",
+          color: "text-yellow-400"
+        },
+        {
+          title: "Hired Freelancers",
+          value: "16",
+          icon: Users,
+          trend: "+5",
+          color: "text-green-400"
+        }
+      ];
+    } else {
+      return [
+        {
+          title: "Total Earnings",
+          value: "$8,945",
+          icon: DollarSign,
+          trend: "+23%",
+          color: "text-green-400"
+        },
+        {
+          title: "Completed Jobs",
+          value: "47",
+          icon: Briefcase,
+          trend: "+8",
+          color: "text-blue-400"
+        },
+        {
+          title: "Active Projects",
+          value: "3",
+          icon: Clock,
+          trend: "±0",
+          color: "text-yellow-400"
+        },
+        {
+          title: "Client Rating",
+          value: "4.8",
+          icon: Star,
+          trend: "+0.2",
+          color: "text-purple-400"
+        }
+      ];
     }
-    if (!isProfileComplete) {
-      navigate('/onboarding');
-    }
-  }, [isConnected, isProfileComplete, navigate]);
-
-  // Mock data for charts
-  const earningsOverTime = [
-    { month: 'Jan', earnings: 320 },
-    { month: 'Feb', earnings: 450 },
-    { month: 'Mar', earnings: 620 },
-    { month: 'Apr', earnings: 300 },
-    { month: 'May', earnings: 780 },
-    { month: 'Jun', earnings: 590 }
-  ];
-
-  const earningsPerSkill = [
-    { skill: 'Web Development', amount: 1250, jobs: 8 },
-    { skill: 'UI/UX Design', amount: 880, jobs: 5 },
-    { skill: 'Content Writing', amount: 420, jobs: 12 },
-    { skill: 'Digital Marketing', amount: 650, jobs: 6 }
-  ];
-
-  const earningsPerClient = [
-    { client: 'TechCorp', value: 800, color: '#8b5cf6' },
-    { client: 'StartupX', value: 600, color: '#06b6d4' },
-    { client: 'DesignLab', value: 500, color: '#10b981' },
-    { client: 'Others', value: 400, color: '#f59e0b' }
-  ];
-
-  const skillRatings = [
-    { skill: 'Web Development', rating: 4.8, jobs: 8 },
-    { skill: 'UI/UX Design', rating: 4.5, jobs: 5 },
-    { skill: 'Content Writing', rating: 4.9, jobs: 12 },
-    { skill: 'Digital Marketing', rating: 4.6, jobs: 6 }
-  ];
-
-  const totalEarnings = earningsPerSkill.reduce((sum, skill) => sum + skill.amount, 0);
-  const totalJobs = skillRatings.reduce((sum, skill) => sum + skill.jobs, 0);
-  const avgRating = skillRatings.reduce((sum, skill) => sum + skill.rating, 0) / skillRatings.length;
-
-  const chartConfig = {
-    earnings: {
-      label: "Earnings (USDT)",
-      color: "#8b5cf6",
-    },
-    amount: {
-      label: "Amount",
-      color: "#06b6d4",
-    },
   };
 
-  if (!profile || !isProfileComplete) {
-    return null;
-  }
+  const stats = getStatsForUserType();
 
   return (
     <div className="min-h-screen bg-skrypto-dark">
       <Navbar />
-      <main className="container mx-auto px-4 py-8">
-        <div className="mb-8">
-          <h1 className="text-3xl md:text-4xl font-bold mb-2">
-            <span className="text-gradient-purple">Analytics Dashboard</span>
-          </h1>
-          <p className="text-white/70">Track your performance and earnings</p>
+      <main className="container mx-auto px-4 py-12">
+        <div className="mb-6">
+          <BackButton to="/dashboard" />
         </div>
 
-        {/* Stats Overview */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <Card className="glass border-white/10">
-            <CardHeader className="pb-2">
-              <CardDescription className="text-white/60">Total Earnings</CardDescription>
-              <CardTitle className="text-2xl text-skrypto-green">${totalEarnings.toLocaleString()}</CardTitle>
-            </CardHeader>
-          </Card>
-          
-          <Card className="glass border-white/10">
-            <CardHeader className="pb-2">
-              <CardDescription className="text-white/60">Jobs Completed</CardDescription>
-              <CardTitle className="text-2xl text-white">{totalJobs}</CardTitle>
-            </CardHeader>
-          </Card>
-          
-          <Card className="glass border-white/10">
-            <CardHeader className="pb-2">
-              <CardDescription className="text-white/60">Average Rating</CardDescription>
-              <CardTitle className="text-2xl text-skrypto-purple">{avgRating.toFixed(1)} ⭐</CardTitle>
-            </CardHeader>
-          </Card>
-          
-          <Card className="glass border-white/10">
-            <CardHeader className="pb-2">
-              <CardDescription className="text-white/60">Active Skills</CardDescription>
-              <CardTitle className="text-2xl text-white">{profile.skills.length}</CardTitle>
-            </CardHeader>
-          </Card>
-        </div>
+        <div className="max-w-6xl mx-auto">
+          <div className="mb-8">
+            <h1 className="text-3xl font-bold text-gradient-purple mb-2">
+              {isClient ? 'Client' : 'Freelancer'} Analytics
+            </h1>
+            <p className="text-white/70">
+              {isClient ? 'Track your hiring activities and project investments' : 'Monitor your earnings, performance, and growth'}
+            </p>
+          </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Earnings Over Time */}
+          {/* Stats Overview */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            {stats.map((stat, index) => {
+              const IconComponent = stat.icon;
+              return (
+                <Card key={index} className="glass border-white/10">
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium text-white/60">
+                      {stat.title}
+                    </CardTitle>
+                    <IconComponent className={`h-4 w-4 ${stat.color}`} />
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold text-white">{stat.value}</div>
+                    <p className="text-xs text-white/60">
+                      <span className={stat.trend.startsWith('+') ? 'text-green-400' : stat.trend.startsWith('-') ? 'text-red-400' : 'text-yellow-400'}>
+                        {stat.trend}
+                      </span>
+                      {' '}from last month
+                    </p>
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
+
+          {/* Charts */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            {/* Earnings/Spending Chart */}
+            <Card className="glass border-white/10">
+              <CardHeader>
+                <CardTitle className="text-white">
+                  {isClient ? 'Monthly Spending' : 'Monthly Earnings'}
+                </CardTitle>
+                <CardDescription className="text-white/60">
+                  {isClient ? 'Your investment in projects over time' : 'Your earnings trend over the last 6 months'}
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ResponsiveContainer width="100%" height={300}>
+                  <BarChart data={earningsData}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#ffffff20" />
+                    <XAxis dataKey="month" stroke="#ffffff60" />
+                    <YAxis stroke="#ffffff60" />
+                    <Tooltip 
+                      contentStyle={{ 
+                        backgroundColor: '#1a1a2e', 
+                        border: '1px solid #ffffff20',
+                        borderRadius: '8px'
+                      }}
+                    />
+                    <Bar 
+                      dataKey={isClient ? "client" : "freelancer"} 
+                      fill={isClient ? "#F72585" : "#06D6A0"} 
+                      radius={[4, 4, 0, 0]}
+                    />
+                  </BarChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
+
+            {/* Skills/Projects Distribution */}
+            <Card className="glass border-white/10">
+              <CardHeader>
+                <CardTitle className="text-white">
+                  {isClient ? 'Project Categories' : 'Skills Distribution'}
+                </CardTitle>
+                <CardDescription className="text-white/60">
+                  {isClient ? 'Types of projects you typically hire for' : 'Breakdown of your service offerings'}
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ResponsiveContainer width="100%" height={300}>
+                  <PieChart>
+                    <Pie
+                      data={skillsData}
+                      cx="50%"
+                      cy="50%"
+                      outerRadius={100}
+                      fill="#8884d8"
+                      dataKey="value"
+                      label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                    >
+                      {skillsData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.color} />
+                      ))}
+                    </Pie>
+                    <Tooltip />
+                  </PieChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Performance Metrics */}
           <Card className="glass border-white/10">
             <CardHeader>
-              <CardTitle className="text-white">Earnings Over Time</CardTitle>
+              <CardTitle className="text-white flex items-center gap-2">
+                <TrendingUp className="text-green-400" size={20} />
+                Performance Insights
+              </CardTitle>
               <CardDescription className="text-white/60">
-                Monthly earnings for the past 6 months
+                Key metrics and recommendations for improvement
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <ChartContainer config={chartConfig}>
-                <LineChart data={earningsOverTime}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-                  <XAxis dataKey="month" stroke="#9ca3af" />
-                  <YAxis stroke="#9ca3af" />
-                  <ChartTooltip content={<ChartTooltipContent />} />
-                  <Line
-                    type="monotone"
-                    dataKey="earnings"
-                    stroke="#8b5cf6"
-                    strokeWidth={2}
-                    dot={{ fill: "#8b5cf6" }}
-                  />
-                </LineChart>
-              </ChartContainer>
-            </CardContent>
-          </Card>
-
-          {/* Earnings Per Skill */}
-          <Card className="glass border-white/10">
-            <CardHeader>
-              <CardTitle className="text-white">Earnings Per Skill</CardTitle>
-              <CardDescription className="text-white/60">
-                Revenue breakdown by skill category
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ChartContainer config={chartConfig}>
-                <BarChart data={earningsPerSkill}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-                  <XAxis dataKey="skill" stroke="#9ca3af" fontSize={12} />
-                  <YAxis stroke="#9ca3af" />
-                  <ChartTooltip content={<ChartTooltipContent />} />
-                  <Bar dataKey="amount" fill="#06b6d4" radius={[4, 4, 0, 0]} />
-                </BarChart>
-              </ChartContainer>
-            </CardContent>
-          </Card>
-
-          {/* Earnings Per Client */}
-          <Card className="glass border-white/10">
-            <CardHeader>
-              <CardTitle className="text-white">Client Distribution</CardTitle>
-              <CardDescription className="text-white/60">
-                Revenue from top clients
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ChartContainer config={chartConfig}>
-                <PieChart>
-                  <Pie
-                    data={earningsPerClient}
-                    dataKey="value"
-                    nameKey="client"
-                    cx="50%"
-                    cy="50%"
-                    outerRadius={80}
-                    label={({ client, value }) => `${client}: $${value}`}
-                  >
-                    {earningsPerClient.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
-                    ))}
-                  </Pie>
-                  <ChartTooltip content={<ChartTooltipContent />} />
-                </PieChart>
-              </ChartContainer>
-            </CardContent>
-          </Card>
-
-          {/* Skill Ratings */}
-          <Card className="glass border-white/10">
-            <CardHeader>
-              <CardTitle className="text-white">Skill Performance</CardTitle>
-              <CardDescription className="text-white/60">
-                Ratings and job completion by skill
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {skillRatings.map((item, idx) => (
-                  <div key={idx} className="flex items-center justify-between p-3 bg-white/5 rounded-lg">
-                    <div>
-                      <span className="text-white font-medium">{item.skill}</span>
-                      <p className="text-sm text-white/60">{item.jobs} jobs completed</p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-4">
+                  <h4 className="font-semibold text-white">
+                    {isClient ? 'Hiring Efficiency' : 'Work Quality'}
+                  </h4>
+                  <div className="space-y-3">
+                    <div className="flex justify-between items-center">
+                      <span className="text-white/70">
+                        {isClient ? 'Average hire time' : 'On-time delivery'}
+                      </span>
+                      <Badge className="bg-green-500/20 text-green-400">
+                        {isClient ? '3.2 days' : '94%'}
+                      </Badge>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <Badge variant="outline" className="text-yellow-400 border-yellow-400">
-                        {item.rating} ⭐
+                    <div className="flex justify-between items-center">
+                      <span className="text-white/70">
+                        {isClient ? 'Project success rate' : 'Client satisfaction'}
+                      </span>
+                      <Badge className="bg-blue-500/20 text-blue-400">
+                        {isClient ? '89%' : '4.8/5'}
+                      </Badge>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-white/70">
+                        {isClient ? 'Repeat freelancers' : 'Repeat clients'}
+                      </span>
+                      <Badge className="bg-purple-500/20 text-purple-400">
+                        {isClient ? '67%' : '43%'}
                       </Badge>
                     </div>
                   </div>
-                ))}
+                </div>
+                
+                <div className="space-y-4">
+                  <h4 className="font-semibold text-white">
+                    {isClient ? 'Budget Management' : 'Earnings Growth'}
+                  </h4>
+                  <div className="space-y-3">
+                    <div className="flex justify-between items-center">
+                      <span className="text-white/70">
+                        {isClient ? 'Budget accuracy' : 'Monthly growth'}
+                      </span>
+                      <Badge className="bg-green-500/20 text-green-400">
+                        {isClient ? '±8%' : '+23%'}
+                      </Badge>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-white/70">
+                        {isClient ? 'Cost per project' : 'Average project value'}
+                      </span>
+                      <Badge className="bg-blue-500/20 text-blue-400">
+                        {isClient ? '$514' : '$267'}
+                      </Badge>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-white/70">
+                        {isClient ? 'ROI estimate' : 'Hourly rate'}
+                      </span>
+                      <Badge className="bg-yellow-500/20 text-yellow-400">
+                        {isClient ? '234%' : '$28/hr'}
+                      </Badge>
+                    </div>
+                  </div>
+                </div>
               </div>
             </CardContent>
           </Card>

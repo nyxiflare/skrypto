@@ -84,6 +84,8 @@ const ProtectedRoute = ({
           <button
             onClick={() => window.history.back()}
             className="bg-skrypto-purple hover:bg-skrypto-purple/90 text-white px-6 py-2 rounded"
+          >
+            Go Back
           </button>
         </div>
       </div>

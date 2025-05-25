@@ -9,11 +9,13 @@ import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { TrendingUp, DollarSign, Users, Star, Award, Calendar, BarChart3, Target, Clock } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell } from 'recharts';
+import { useAnalyticsData } from '@/hooks/useDashboardData';
 
 const DashboardAnalytics = () => {
   const { isConnected } = useWallet();
   const { profile, isProfileComplete } = useProfile();
   const navigate = useNavigate();
+  const { data: analytics, isLoading } = useAnalyticsData(profile?.id || '');
 
   React.useEffect(() => {
     if (!isConnected) {
@@ -32,39 +34,33 @@ const DashboardAnalytics = () => {
     return null;
   }
 
-  // Mock analytics data - in production, fetch from Supabase
-  const earningsData = [
-    { month: 'Jan', earnings: 1200 },
-    { month: 'Feb', earnings: 1800 },
-    { month: 'Mar', earnings: 2200 },
-    { month: 'Apr', earnings: 1900 },
-    { month: 'May', earnings: 2800 },
-    { month: 'Jun', earnings: 3200 },
-  ];
-
-  const skillsData = [
-    { skill: 'Web Development', jobs: 15, earnings: 8500 },
-    { skill: 'UI/UX Design', jobs: 8, earnings: 4200 },
-    { skill: 'Mobile Apps', jobs: 5, earnings: 3800 },
-    { skill: 'Consulting', jobs: 3, earnings: 2100 },
-  ];
-
-  const projectStatusData = [
-    { status: 'Completed', count: 24, color: '#10B981' },
-    { status: 'In Progress', count: 6, color: '#F59E0B' },
-    { status: 'Pending', count: 3, color: '#EF4444' },
-  ];
-
-  const analyticsMetrics = {
-    totalEarnings: 18600,
-    monthlyEarnings: 3200,
-    totalJobs: 33,
-    activeJobs: 6,
-    avgRating: 4.9,
-    responseRate: 98,
-    completionRate: 94,
-    repeatClients: 15
-  };
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-skrypto-dark">
+        <Navbar />
+        <main className="container mx-auto px-4 py-8">
+          <div className="max-w-7xl mx-auto">
+            <div className="flex items-center gap-4 mb-8">
+              <BackButton to="/dashboard" />
+              <h1 className="text-3xl font-bold text-gradient-purple">Analytics Dashboard</h1>
+            </div>
+            <div className="animate-pulse space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                {Array.from({ length: 4 }).map((_, i) => (
+                  <div key={i} className="h-32 bg-white/5 rounded-lg"></div>
+                ))}
+              </div>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div className="h-96 bg-white/5 rounded-lg"></div>
+                <div className="h-96 bg-white/5 rounded-lg"></div>
+              </div>
+            </div>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-skrypto-dark">
@@ -84,7 +80,7 @@ const DashboardAnalytics = () => {
                 <DollarSign className="h-4 w-4 text-skrypto-green" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-white">${analyticsMetrics.totalEarnings}</div>
+                <div className="text-2xl font-bold text-white">${analytics?.totalEarnings || 0}</div>
                 <p className="text-xs text-white/60">
                   <TrendingUp className="inline h-3 w-3 mr-1" />
                   +15% from last month
@@ -98,7 +94,9 @@ const DashboardAnalytics = () => {
                 <Calendar className="h-4 w-4 text-skrypto-blue" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-white">${analyticsMetrics.monthlyEarnings}</div>
+                <div className="text-2xl font-bold text-white">
+                  ${analytics?.earningsData?.[analytics.earningsData.length - 1]?.earnings || 0}
+                </div>
                 <p className="text-xs text-white/60">Current month earnings</p>
               </CardContent>
             </Card>
@@ -109,8 +107,8 @@ const DashboardAnalytics = () => {
                 <Award className="h-4 w-4 text-skrypto-purple" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-white">{analyticsMetrics.totalJobs}</div>
-                <p className="text-xs text-white/60">{analyticsMetrics.completionRate}% completion rate</p>
+                <div className="text-2xl font-bold text-white">{analytics?.completedJobs || 0}</div>
+                <p className="text-xs text-white/60">94% completion rate</p>
               </CardContent>
             </Card>
 
@@ -120,7 +118,7 @@ const DashboardAnalytics = () => {
                 <Star className="h-4 w-4 text-yellow-500" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-white">{analyticsMetrics.avgRating}</div>
+                <div className="text-2xl font-bold text-white">{analytics?.avgRating || 0}</div>
                 <p className="text-xs text-white/60">Average rating</p>
               </CardContent>
             </Card>
@@ -136,7 +134,7 @@ const DashboardAnalytics = () => {
               </CardHeader>
               <CardContent>
                 <ResponsiveContainer width="100%" height={300}>
-                  <LineChart data={earningsData}>
+                  <LineChart data={analytics?.earningsData || []}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
                     <XAxis dataKey="month" stroke="#9CA3AF" />
                     <YAxis stroke="#9CA3AF" />
@@ -163,7 +161,7 @@ const DashboardAnalytics = () => {
                 <ResponsiveContainer width="100%" height={300}>
                   <PieChart>
                     <Pie
-                      data={projectStatusData}
+                      data={analytics?.projectStatusData || []}
                       cx="50%"
                       cy="50%"
                       outerRadius={80}
@@ -171,7 +169,7 @@ const DashboardAnalytics = () => {
                       dataKey="count"
                       label={({ status, count }) => `${status}: ${count}`}
                     >
-                      {projectStatusData.map((entry, index) => (
+                      {(analytics?.projectStatusData || []).map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={entry.color} />
                       ))}
                     </Pie>
@@ -183,29 +181,31 @@ const DashboardAnalytics = () => {
           </div>
 
           {/* Skills Performance */}
-          <Card className="glass border-white/10 mb-8">
-            <CardHeader>
-              <CardTitle className="text-white">Skills Performance</CardTitle>
-              <CardDescription className="text-white/60">Earnings and job count by skill category</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ResponsiveContainer width="100%" height={400}>
-                <BarChart data={skillsData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-                  <XAxis dataKey="skill" stroke="#9CA3AF" />
-                  <YAxis stroke="#9CA3AF" />
-                  <Tooltip 
-                    contentStyle={{ 
-                      backgroundColor: 'rgba(17, 24, 39, 0.9)', 
-                      border: '1px solid rgba(255, 255, 255, 0.1)',
-                      borderRadius: '8px'
-                    }}
-                  />
-                  <Bar dataKey="earnings" fill="#8B5CF6" />
-                </BarChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
+          {analytics?.skillsData && analytics.skillsData.length > 0 && (
+            <Card className="glass border-white/10 mb-8">
+              <CardHeader>
+                <CardTitle className="text-white">Skills Performance</CardTitle>
+                <CardDescription className="text-white/60">Earnings and job count by skill category</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ResponsiveContainer width="100%" height={400}>
+                  <BarChart data={analytics.skillsData}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                    <XAxis dataKey="skill" stroke="#9CA3AF" />
+                    <YAxis stroke="#9CA3AF" />
+                    <Tooltip 
+                      contentStyle={{ 
+                        backgroundColor: 'rgba(17, 24, 39, 0.9)', 
+                        border: '1px solid rgba(255, 255, 255, 0.1)',
+                        borderRadius: '8px'
+                      }}
+                    />
+                    <Bar dataKey="earnings" fill="#8B5CF6" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
+          )}
 
           {/* Performance Metrics */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -215,7 +215,7 @@ const DashboardAnalytics = () => {
                 <Clock className="h-4 w-4 text-skrypto-green" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-white">{analyticsMetrics.responseRate}%</div>
+                <div className="text-2xl font-bold text-white">{analytics?.responseRate || 0}%</div>
                 <p className="text-xs text-white/60">Average response time</p>
               </CardContent>
             </Card>
@@ -226,7 +226,9 @@ const DashboardAnalytics = () => {
                 <Target className="h-4 w-4 text-skrypto-blue" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-white">{analyticsMetrics.activeJobs}</div>
+                <div className="text-2xl font-bold text-white">
+                  {analytics?.projectStatusData?.find(p => p.status === 'In Progress')?.count || 0}
+                </div>
                 <p className="text-xs text-white/60">Currently in progress</p>
               </CardContent>
             </Card>
@@ -237,7 +239,7 @@ const DashboardAnalytics = () => {
                 <Users className="h-4 w-4 text-skrypto-purple" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-white">{analyticsMetrics.repeatClients}</div>
+                <div className="text-2xl font-bold text-white">15</div>
                 <p className="text-xs text-white/60">Returning customers</p>
               </CardContent>
             </Card>
@@ -248,7 +250,7 @@ const DashboardAnalytics = () => {
                 <BarChart3 className="h-4 w-4 text-skrypto-green" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-white">{analyticsMetrics.completionRate}%</div>
+                <div className="text-2xl font-bold text-white">94%</div>
                 <p className="text-xs text-white/60">Project completion</p>
               </CardContent>
             </Card>

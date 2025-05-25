@@ -1,198 +1,177 @@
 
 import React from 'react';
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { ArrowLeft, MessageCircle, Eye, Clock, CheckCircle } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-
-const mockFreelancerJobs = [
-  {
-    id: 1,
-    title: 'Build NFT Minting Website',
-    client: '0xC1D2E3...F4G5',
-    status: 'In Progress',
-    payment: '2.5 ETH',
-    deadline: 'June 12, 2025',
-    progress: 70,
-  },
-  {
-    id: 2,
-    title: 'Design Token Logo',
-    client: '0xH6I7J8...K9L0',
-    status: 'Completed',
-    payment: '0.8 ETH',
-    deadline: 'May 2, 2025',
-    progress: 100,
-  },
-  {
-    id: 3,
-    title: 'Write Smart Contract Documentation',
-    client: '0xM1N2O3...P4Q5',
-    status: 'Pending Review',
-    payment: '1.2 ETH',
-    deadline: 'June 20, 2025',
-    progress: 90,
-  },
-];
+import { CalendarDays, MessageSquare, TrendingUp, Star, Clock, DollarSign } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import DashboardMetrics from './DashboardMetrics';
 
 const FreelancerDashboard = () => {
-  const navigate = useNavigate();
-
-  const getStatusBadge = (status: string) => {
-    if (status === 'Completed') {
-      return <Badge className="bg-skrypto-green text-white">{status}</Badge>;
-    } else if (status === 'In Progress') {
-      return <Badge className="bg-skrypto-purple text-white">{status}</Badge>;
-    } else if (status === 'Pending Review') {
-      return <Badge className="bg-yellow-600 text-white">{status}</Badge>;
-    }
-    return <Badge variant="outline" className="text-white border-white/20">{status}</Badge>;
-  };
-
-  const totalEarnings = mockFreelancerJobs
-    .filter(job => job.status === 'Completed')
-    .reduce((sum, job) => sum + parseFloat(job.payment.split(' ')[0]), 0);
-
   return (
-    <div className="min-h-screen bg-skrypto-dark text-white p-6">
-      <div className="max-w-6xl mx-auto">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <div className="flex items-center gap-4">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => navigate(-1)}
-              className="text-white hover:bg-white/10"
-            >
-              <ArrowLeft size={16} className="mr-2" />
-              Back
-            </Button>
-            <h1 className="text-3xl font-bold text-gradient-purple">Freelancer Dashboard</h1>
-          </div>
-        </div>
-
-        {/* Quick Actions */}
+    <main className="container mx-auto px-4 py-8">
+      <div className="max-w-7xl mx-auto">
         <div className="mb-8">
-          <h2 className="text-xl font-semibold mb-4 text-white">Quick Actions</h2>
-          <div className="flex flex-wrap gap-4">
-            <Button className="bg-skrypto-purple hover:bg-skrypto-purple/90 text-white">
-              Browse Jobs
-            </Button>
-            <Button variant="outline" className="border-skrypto-blue text-white hover:bg-skrypto-blue/20">
-              <MessageCircle size={16} className="mr-2" />
-              Messages
-            </Button>
+          <h1 className="text-3xl font-bold text-gradient-purple mb-2">Dashboard</h1>
+          <p className="text-white/70">Welcome back! Here's your freelance overview.</p>
+        </div>
+
+        {/* Metrics Cards */}
+        <DashboardMetrics />
+
+        {/* Main Content Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Recent Activity */}
+          <div className="lg:col-span-2">
+            <Card className="glass border-white/10 mb-6">
+              <CardHeader>
+                <CardTitle className="text-white flex items-center">
+                  <CalendarDays className="h-5 w-5 mr-2" />
+                  Recent Activity
+                </CardTitle>
+                <CardDescription className="text-white/60">
+                  Your latest projects and milestones
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex items-center justify-between p-4 bg-white/5 rounded-lg">
+                  <div>
+                    <p className="text-white font-medium">NFT Marketplace UI completed</p>
+                    <p className="text-white/60 text-sm">Client: 0xABC...123</p>
+                  </div>
+                  <Badge variant="default" className="bg-skrypto-green">Completed</Badge>
+                </div>
+                <div className="flex items-center justify-between p-4 bg-white/5 rounded-lg">
+                  <div>
+                    <p className="text-white font-medium">Smart Contract Audit in progress</p>
+                    <p className="text-white/60 text-sm">Due: Tomorrow</p>
+                  </div>
+                  <Badge variant="outline" className="border-yellow-500 text-yellow-500">In Progress</Badge>
+                </div>
+                <div className="flex items-center justify-between p-4 bg-white/5 rounded-lg">
+                  <div>
+                    <p className="text-white font-medium">New project proposal received</p>
+                    <p className="text-white/60 text-sm">DeFi Dashboard Design</p>
+                  </div>
+                  <Badge variant="outline" className="border-skrypto-blue text-skrypto-blue">New</Badge>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Quick Actions */}
+            <Card className="glass border-white/10">
+              <CardHeader>
+                <CardTitle className="text-white">Quick Actions</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-2 gap-4">
+                  <Button asChild className="bg-skrypto-purple hover:bg-skrypto-purple/90">
+                    <Link to="/offer-skill">Add New Skill</Link>
+                  </Button>
+                  <Button asChild variant="outline" className="border-white/20 text-white hover:bg-white/5">
+                    <Link to="/dashboard/profile">Edit Profile</Link>
+                  </Button>
+                  <Button asChild variant="outline" className="border-white/20 text-white hover:bg-white/5">
+                    <Link to="/inbox">Check Messages</Link>
+                  </Button>
+                  <Button asChild variant="outline" className="border-white/20 text-white hover:bg-white/5">
+                    <Link to="/dashboard/analytics">View Analytics</Link>
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Sidebar */}
+          <div className="space-y-6">
+            {/* Performance Summary */}
+            <Card className="glass border-white/10">
+              <CardHeader>
+                <CardTitle className="text-white flex items-center">
+                  <TrendingUp className="h-5 w-5 mr-2" />
+                  Performance
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <span className="text-white/70">Rating</span>
+                  <div className="flex items-center">
+                    <Star className="h-4 w-4 text-yellow-500 mr-1" />
+                    <span className="text-white">4.9</span>
+                  </div>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-white/70">Response Rate</span>
+                  <span className="text-white">98%</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-white/70">On-time Delivery</span>
+                  <span className="text-white">100%</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-white/70">Repeat Clients</span>
+                  <span className="text-white">12</span>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Messages Preview */}
+            <Card className="glass border-white/10">
+              <CardHeader>
+                <CardTitle className="text-white flex items-center">
+                  <MessageSquare className="h-5 w-5 mr-2" />
+                  Recent Messages
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="p-3 bg-white/5 rounded-lg">
+                  <p className="text-white text-sm font-medium">Sarah Chen</p>
+                  <p className="text-white/60 text-xs">Project milestone approved!</p>
+                  <p className="text-white/40 text-xs">2 hours ago</p>
+                </div>
+                <div className="p-3 bg-white/5 rounded-lg">
+                  <p className="text-white text-sm font-medium">Alex Rivera</p>
+                  <p className="text-white/60 text-xs">When can we start the audit?</p>
+                  <p className="text-white/40 text-xs">5 hours ago</p>
+                </div>
+                <Button asChild variant="outline" size="sm" className="w-full border-white/20 text-white hover:bg-white/5">
+                  <Link to="/inbox">View All Messages</Link>
+                </Button>
+              </CardContent>
+            </Card>
+
+            {/* Earnings Summary */}
+            <Card className="glass border-white/10">
+              <CardHeader>
+                <CardTitle className="text-white flex items-center">
+                  <DollarSign className="h-5 w-5 mr-2" />
+                  Earnings
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="text-center">
+                  <p className="text-2xl font-bold text-skrypto-green">$3,240</p>
+                  <p className="text-white/60 text-sm">This Month</p>
+                </div>
+                <div className="space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-white/70">Pending</span>
+                    <span className="text-white">$850</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-white/70">Available</span>
+                    <span className="text-white">$2,390</span>
+                  </div>
+                </div>
+                <Button asChild variant="outline" size="sm" className="w-full border-white/20 text-white hover:bg-white/5">
+                  <Link to="/dashboard/analytics">View Details</Link>
+                </Button>
+              </CardContent>
+            </Card>
           </div>
         </div>
-
-        {/* Stats Overview */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <Card className="glass border-white/10">
-            <CardHeader className="pb-2">
-              <CardDescription className="text-white/60">Total Earnings</CardDescription>
-              <CardTitle className="text-2xl text-skrypto-green">{totalEarnings.toFixed(1)} ETH</CardTitle>
-            </CardHeader>
-          </Card>
-          
-          <Card className="glass border-white/10">
-            <CardHeader className="pb-2">
-              <CardDescription className="text-white/60">Active Jobs</CardDescription>
-              <CardTitle className="text-2xl text-skrypto-purple">
-                {mockFreelancerJobs.filter(job => job.status === 'In Progress').length}
-              </CardTitle>
-            </CardHeader>
-          </Card>
-          
-          <Card className="glass border-white/10">
-            <CardHeader className="pb-2">
-              <CardDescription className="text-white/60">Completed Jobs</CardDescription>
-              <CardTitle className="text-2xl text-white">
-                {mockFreelancerJobs.filter(job => job.status === 'Completed').length}
-              </CardTitle>
-            </CardHeader>
-          </Card>
-
-          <Card className="glass border-white/10">
-            <CardHeader className="pb-2">
-              <CardDescription className="text-white/60">Pending Reviews</CardDescription>
-              <CardTitle className="text-2xl text-yellow-400">
-                {mockFreelancerJobs.filter(job => job.status === 'Pending Review').length}
-              </CardTitle>
-            </CardHeader>
-          </Card>
-        </div>
-
-        {/* Jobs Table */}
-        <Card className="glass border-white/10">
-          <CardHeader>
-            <CardTitle className="text-white">My Jobs</CardTitle>
-            <CardDescription className="text-white/60">
-              Track your active and completed projects
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow className="border-white/10">
-                  <TableHead className="text-white/60">Job Title</TableHead>
-                  <TableHead className="text-white/60">Client</TableHead>
-                  <TableHead className="text-white/60">Status</TableHead>
-                  <TableHead className="text-white/60">Payment</TableHead>
-                  <TableHead className="text-white/60">Progress</TableHead>
-                  <TableHead className="text-white/60">Deadline</TableHead>
-                  <TableHead className="text-white/60">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {mockFreelancerJobs.map((job) => (
-                  <TableRow key={job.id} className="border-white/10 hover:bg-white/5">
-                    <TableCell className="text-white font-medium">{job.title}</TableCell>
-                    <TableCell className="text-white/80 font-mono text-sm">{job.client}</TableCell>
-                    <TableCell>{getStatusBadge(job.status)}</TableCell>
-                    <TableCell className="text-skrypto-green font-semibold">{job.payment}</TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-2">
-                        <div className="w-20 h-2 bg-white/20 rounded-full">
-                          <div 
-                            className="h-full bg-skrypto-purple rounded-full" 
-                            style={{ width: `${job.progress}%` }}
-                          />
-                        </div>
-                        <span className="text-sm text-white/60">{job.progress}%</span>
-                      </div>
-                    </TableCell>
-                    <TableCell className="text-white/80">{job.deadline}</TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-2">
-                        <Button size="sm" variant="ghost" className="text-skrypto-blue hover:bg-skrypto-blue/20">
-                          <Eye size={14} className="mr-1" />
-                          View
-                        </Button>
-                        {job.status === 'In Progress' && (
-                          <Button size="sm" variant="ghost" className="text-skrypto-green hover:bg-skrypto-green/20">
-                            <Clock size={14} className="mr-1" />
-                            Update
-                          </Button>
-                        )}
-                        {job.status === 'Pending Review' && (
-                          <Button size="sm" variant="ghost" className="text-yellow-400 hover:bg-yellow-400/20">
-                            <CheckCircle size={14} className="mr-1" />
-                            Submit
-                          </Button>
-                        )}
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
       </div>
-    </div>
+    </main>
   );
 };
 

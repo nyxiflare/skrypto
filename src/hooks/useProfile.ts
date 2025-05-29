@@ -45,7 +45,11 @@ export const useGetProfile = (userId?: string) => {
         return null;
       }
       
-      return data;
+      // Type assertion to ensure profile_type matches our interface
+      return {
+        ...data,
+        profile_type: data.profile_type as 'hire' | 'earn' | 'guest'
+      } as UserProfile;
     },
     enabled: !!userId,
   });

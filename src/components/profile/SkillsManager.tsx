@@ -8,10 +8,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Plus, X } from 'lucide-react';
-import { useProfile, skillCategories, UserSkill } from '@/contexts/ProfileContext';
+import { useProfile, skillCategories } from '@/contexts/ProfileContext';
+import { useSkillManagement } from '@/hooks/useProfileManagement';
 
 const SkillsManager = () => {
-  const { userSkills, addSkill, deleteSkill } = useProfile();
+  const { userSkills } = useProfile();
+  const skillManagement = useSkillManagement();
   const [showForm, setShowForm] = useState(false);
   const [newSkill, setNewSkill] = useState({
     skill_name: '',
@@ -25,7 +27,11 @@ const SkillsManager = () => {
     e.preventDefault();
     if (!newSkill.skill_name || !newSkill.category) return;
 
-    await addSkill(newSkill);
+    skillManagement.mutate({
+      action: 'add',
+      skill: newSkill
+    });
+
     setNewSkill({
       skill_name: '',
       category: '',
@@ -36,9 +42,12 @@ const SkillsManager = () => {
     setShowForm(false);
   };
 
-  const handleDelete = async (skillId: string) => {
+  const handleDelete = async (skill: any) => {
     if (confirm('Are you sure you want to delete this skill?')) {
-      await deleteSkill(skillId);
+      skillManagement.mutate({
+        action: 'delete',
+        skill: { id: skill.id }
+      });
     }
   };
 
@@ -51,6 +60,7 @@ const SkillsManager = () => {
             onClick={() => setShowForm(true)}
             className="bg-skrypto-purple hover:bg-skrypto-purple/90"
             size="sm"
+            disabled={skillManagement.isPending}
           >
             <Plus size={16} className="mr-2" />
             Add Skill
@@ -81,10 +91,11 @@ const SkillsManager = () => {
                     )}
                   </div>
                   <Button
-                    onClick={() => handleDelete(skill.id)}
+                    onClick={() => handleDelete(skill)}
                     variant="ghost"
                     size="sm"
                     className="text-red-400 hover:text-red-300 hover:bg-red-500/10"
+                    disabled={skillManagement.isPending}
                   >
                     <X size={16} />
                   </Button>
@@ -178,14 +189,16 @@ const SkillsManager = () => {
                 <Button
                   type="submit"
                   className="bg-skrypto-green hover:bg-skrypto-green/90"
+                  disabled={skillManagement.isPending}
                 >
-                  Add Skill
+                  {skillManagement.isPending ? 'Adding...' : 'Add Skill'}
                 </Button>
                 <Button
                   type="button"
                   variant="outline"
                   onClick={() => setShowForm(false)}
                   className="border-white/20 text-white hover:bg-white/5"
+                  disabled={skillManagement.isPending}
                 >
                   Cancel
                 </Button>

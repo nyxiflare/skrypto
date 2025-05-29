@@ -121,3 +121,46 @@ export const useWalletManagement = () => {
     },
   });
 };
+
+export const usePortfolioManagement = () => {
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ action, item }: { action: 'add' | 'delete'; item: any }) => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) throw new Error('Not authenticated');
+
+      const functionName = action === 'add' ? 'add-portfolio-item' : 'delete-portfolio-item';
+      const body = action === 'add' 
+        ? { title: item.title, description: item.description, media_url: item.media_url }
+        : { item_id: item.id };
+
+      const { data, error } = await supabase.functions.invoke(functionName, {
+        body,
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+        },
+      });
+
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: (data, variables) => {
+      toast({
+        title: variables.action === 'add' ? "Portfolio Item Added" : "Portfolio Item Deleted",
+        description: `Portfolio item ${variables.action === 'add' ? 'added' : 'deleted'} successfully.`,
+      });
+      queryClient.invalidateQueries({ queryKey: ['freelancer-profile'] });
+      queryClient.invalidateQueries({ queryKey: ['profile'] });
+    },
+    onError: (error) => {
+      console.error('Portfolio management error:', error);
+      toast({
+        variant: "destructive",
+        title: "Operation Failed",
+        description: "There was an error managing your portfolio. Please try again.",
+      });
+    },
+  });
+};

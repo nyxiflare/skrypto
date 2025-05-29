@@ -9,6 +9,96 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      blocks: {
+        Row: {
+          blocked_id: string
+          blocker_id: string
+          reason: string | null
+          timestamp: string | null
+        }
+        Insert: {
+          blocked_id: string
+          blocker_id: string
+          reason?: string | null
+          timestamp?: string | null
+        }
+        Update: {
+          blocked_id?: string
+          blocker_id?: string
+          reason?: string | null
+          timestamp?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "blocks_blocked_id_fkey"
+            columns: ["blocked_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "blocks_blocker_id_fkey"
+            columns: ["blocker_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      jobs: {
+        Row: {
+          budget: number | null
+          client_id: string | null
+          completed_at: string | null
+          created_at: string | null
+          description: string | null
+          due_date: string | null
+          freelancer_id: string | null
+          id: string
+          status: string | null
+          title: string
+        }
+        Insert: {
+          budget?: number | null
+          client_id?: string | null
+          completed_at?: string | null
+          created_at?: string | null
+          description?: string | null
+          due_date?: string | null
+          freelancer_id?: string | null
+          id?: string
+          status?: string | null
+          title: string
+        }
+        Update: {
+          budget?: number | null
+          client_id?: string | null
+          completed_at?: string | null
+          created_at?: string | null
+          description?: string | null
+          due_date?: string | null
+          freelancer_id?: string | null
+          id?: string
+          status?: string | null
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "jobs_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "jobs_freelancer_id_fkey"
+            columns: ["freelancer_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       memberships: {
         Row: {
           created_at: string | null
@@ -41,6 +131,164 @@ export type Database = {
           {
             foreignKeyName: "memberships_user_id_fkey"
             columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      messages: {
+        Row: {
+          content: string
+          deleted: boolean | null
+          id: string
+          read: boolean | null
+          receiver_id: string | null
+          sender_id: string | null
+          timestamp: string | null
+        }
+        Insert: {
+          content: string
+          deleted?: boolean | null
+          id?: string
+          read?: boolean | null
+          receiver_id?: string | null
+          sender_id?: string | null
+          timestamp?: string | null
+        }
+        Update: {
+          content?: string
+          deleted?: boolean | null
+          id?: string
+          read?: boolean | null
+          receiver_id?: string | null
+          sender_id?: string | null
+          timestamp?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "messages_receiver_id_fkey"
+            columns: ["receiver_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "messages_sender_id_fkey"
+            columns: ["sender_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      portfolio: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          id: string
+          media_url: string | null
+          title: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          media_url?: string | null
+          title: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          media_url?: string | null
+          title?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "portfolio_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      reports: {
+        Row: {
+          reason: string
+          reported_id: string
+          reporter_id: string
+          timestamp: string | null
+        }
+        Insert: {
+          reason: string
+          reported_id: string
+          reporter_id: string
+          timestamp?: string | null
+        }
+        Update: {
+          reason?: string
+          reported_id?: string
+          reporter_id?: string
+          timestamp?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reports_reported_id_fkey"
+            columns: ["reported_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reports_reporter_id_fkey"
+            columns: ["reporter_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      reviews: {
+        Row: {
+          comment: string | null
+          created_at: string | null
+          freelancer_id: string | null
+          id: string
+          rating: number | null
+          reviewer_id: string | null
+        }
+        Insert: {
+          comment?: string | null
+          created_at?: string | null
+          freelancer_id?: string | null
+          id?: string
+          rating?: number | null
+          reviewer_id?: string | null
+        }
+        Update: {
+          comment?: string | null
+          created_at?: string | null
+          freelancer_id?: string | null
+          id?: string
+          rating?: number | null
+          reviewer_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reviews_freelancer_id_fkey"
+            columns: ["freelancer_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reviews_reviewer_id_fkey"
+            columns: ["reviewer_id"]
             isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["id"]
@@ -95,10 +343,13 @@ export type Database = {
           email: string | null
           email_verified: boolean | null
           id: string
+          language: string | null
           profile_image: string | null
           profile_type: string | null
+          timezone: string | null
           updated_at: string | null
           username: string | null
+          visibility: string | null
           wallet_address: string
         }
         Insert: {
@@ -107,10 +358,13 @@ export type Database = {
           email?: string | null
           email_verified?: boolean | null
           id?: string
+          language?: string | null
           profile_image?: string | null
           profile_type?: string | null
+          timezone?: string | null
           updated_at?: string | null
           username?: string | null
+          visibility?: string | null
           wallet_address: string
         }
         Update: {
@@ -119,10 +373,13 @@ export type Database = {
           email?: string | null
           email_verified?: boolean | null
           id?: string
+          language?: string | null
           profile_image?: string | null
           profile_type?: string | null
+          timezone?: string | null
           updated_at?: string | null
           username?: string | null
+          visibility?: string | null
           wallet_address?: string
         }
         Relationships: []

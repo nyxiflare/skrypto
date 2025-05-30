@@ -1,106 +1,149 @@
 
-import React from 'react';
+import React, { useState } from 'react';
+import { useParams } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import ConversationList from '@/components/messaging/ConversationList';
+import ChatWindow from '@/components/messaging/ChatWindow';
+import MessageInput from '@/components/messaging/MessageInput';
+import ChatHeader from '@/components/messaging/ChatHeader';
+import { Card } from '@/components/ui/card';
+import { useGetConversation, useSendMessage } from '@/hooks/useMessaging';
 import { useProfile } from '@/contexts/ProfileContext';
-import { useWallet } from '@/contexts/WalletContext';
-import { useNavigate } from 'react-router-dom';
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft, MessageCircle } from 'lucide-react';
-
-const mockMessages = [
-  {
-    id: 1,
-    sender: '0xA1B2C3...E9F0',
-    subject: 'Project Update Required',
-    preview: 'Hi, I need an update on the NFT minting website...',
-    time: '2 hours ago',
-    unread: true,
-  },
-  {
-    id: 2,
-    sender: '0xCD2E4F...F91A',
-    subject: 'Payment Released',
-    preview: 'Your payment for the logo design has been released...',
-    time: '1 day ago',
-    unread: false,
-  },
-];
 
 const Inbox = () => {
-  const { isConnected } = useWallet();
-  const { profile, isProfileComplete } = useProfile();
-  const navigate = useNavigate();
+  const { userId } = useParams();
+  const [selectedUserId, setSelectedUserId] = useState<string | null>(userId || null);
+  const { profile } = useProfile();
+  
+  const getConversationMutation = useGetConversation();
+  const sendMessageMutation = useSendMessage();
 
-  React.useEffect(() => {
-    if (!isConnected) {
-      navigate('/');
+  // Mock conversations data - replace with actual data fetching
+  const conversations = [
+    {
+      id: '1',
+      user: {
+        id: 'user1',
+        username: 'john_dev',
+        profile_image: '/placeholder.svg'
+      },
+      lastMessage: {
+        content: 'Hey, I saw your proposal. Looks great!',
+        timestamp: new Date().toISOString(),
+        read: false
+      },
+      unreadCount: 2
+    },
+    {
+      id: '2',
+      user: {
+        id: 'user2',
+        username: 'sarah_designer',
+        profile_image: '/placeholder.svg'
+      },
+      lastMessage: {
+        content: 'When can we start the project?',
+        timestamp: new Date(Date.now() - 3600000).toISOString(),
+        read: true
+      },
+      unreadCount: 0
     }
-    if (!isProfileComplete) {
-      navigate('/onboarding');
-    }
-  }, [isConnected, isProfileComplete, navigate]);
+  ];
 
-  if (!profile || !isProfileComplete) {
-    return null;
-  }
+  const [messages, setMessages] = useState([
+    {
+      id: '1',
+      sender_id: 'user1',
+      receiver_id: profile?.id || '',
+      content: 'Hey, I saw your proposal. Looks great!',
+      timestamp: new Date().toISOString(),
+      read: false
+    },
+    {
+      id: '2',
+      sender_id: profile?.id || '',
+      receiver_id: 'user1',
+      content: 'Thank you! When would you like to start?',
+      timestamp: new Date(Date.now() + 300000).toISOString(),
+      read: true
+    }
+  ]);
+
+  const handleSelectConversation = (userId: string) => {
+    setSelectedUserId(userId);
+    // Fetch conversation messages
+    getConversationMutation.mutate({ with_user_id: userId });
+  };
+
+  const handleSendMessage = (content: string) => {
+    if (!selectedUserId) return;
+    
+    sendMessageMutation.mutate(
+      { receiver_id: selectedUserId, content },
+      {
+        onSuccess: () => {
+          // Add message to local state for immediate UI update
+          const newMessage = {
+            id: Date.now().toString(),
+            sender_id: profile?.id || '',
+            receiver_id: selectedUserId,
+            content,
+            timestamp: new Date().toISOString(),
+            read: false
+          };
+          setMessages(prev => [...prev, newMessage]);
+        }
+      }
+    );
+  };
+
+  const selectedUser = conversations.find(conv => conv.user.id === selectedUserId)?.user;
 
   return (
     <div className="min-h-screen bg-skrypto-dark">
       <Navbar />
       <main className="container mx-auto px-4 py-8">
-        <div className="max-w-4xl mx-auto">
-          <div className="flex items-center gap-4 mb-8">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => navigate(-1)}
-              className="text-white hover:bg-white/10"
-            >
-              <ArrowLeft size={16} className="mr-2" />
-              Back
-            </Button>
-            <h1 className="text-3xl font-bold text-gradient-purple">Inbox</h1>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-[calc(100vh-200px)]">
+          {/* Conversations List */}
+          <div className="lg:col-span-1">
+            <ConversationList
+              conversations={conversations}
+              onSelectConversation={handleSelectConversation}
+              selectedUserId={selectedUserId || undefined}
+            />
           </div>
 
-          <Card className="glass border-white/10">
-            <CardHeader>
-              <CardTitle className="text-white flex items-center gap-2">
-                <MessageCircle size={20} />
-                Messages
-              </CardTitle>
-              <CardDescription className="text-white/60">
-                Your conversation history with clients and freelancers
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {mockMessages.map((message) => (
-                  <div
-                    key={message.id}
-                    className={`p-4 rounded-lg border border-white/10 hover:bg-white/5 cursor-pointer ${
-                      message.unread ? 'bg-skrypto-purple/10' : 'bg-white/5'
-                    }`}
-                  >
-                    <div className="flex justify-between items-start mb-2">
-                      <div className="flex items-center gap-2">
-                        <span className="text-white font-medium">{message.sender}</span>
-                        {message.unread && (
-                          <span className="bg-skrypto-purple text-white text-xs px-2 py-1 rounded-full">
-                            New
-                          </span>
-                        )}
-                      </div>
-                      <span className="text-white/60 text-sm">{message.time}</span>
-                    </div>
-                    <h3 className="text-white font-semibold mb-1">{message.subject}</h3>
-                    <p className="text-white/70 text-sm">{message.preview}</p>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
+          {/* Chat Area */}
+          <div className="lg:col-span-2 flex flex-col">
+            {selectedUserId && selectedUser ? (
+              <>
+                <ChatHeader
+                  user={selectedUser}
+                  onBlock={() => console.log('Block user')}
+                  onReport={() => console.log('Report user')}
+                />
+                <div className="flex-1">
+                  <ChatWindow
+                    messages={messages}
+                    currentUserId={profile?.id || ''}
+                    otherUser={selectedUser}
+                  />
+                </div>
+                <MessageInput
+                  onSendMessage={handleSendMessage}
+                  disabled={sendMessageMutation.isPending}
+                />
+              </>
+            ) : (
+              <Card className="glass border-white/10 h-full flex items-center justify-center">
+                <div className="text-center text-white/70">
+                  <h3 className="text-xl mb-2">Select a conversation</h3>
+                  <p>Choose a conversation from the list to start messaging</p>
+                </div>
+              </Card>
+            )}
+          </div>
         </div>
       </main>
       <Footer />

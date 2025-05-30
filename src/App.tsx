@@ -22,6 +22,8 @@ import PostJob from "./pages/PostJob";
 import PostJobSuccess from "./pages/PostJobSuccess";
 import Connect from "./pages/Connect";
 import Membership from "./pages/Membership";
+import MessagingPage from "./pages/MessagingPage";
+import FreelancerProfilePage from "./pages/FreelancerProfilePage";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { WalletProvider } from "./contexts/WalletContext";
 import { ProfileProvider } from "./contexts/ProfileContext";
@@ -67,6 +69,17 @@ const App = () => (
                   </ProtectedRoute>
                 } />
                 <Route path="/profile/:username" element={<UserProfile />} />
+                <Route path="/freelancer/:freelancerId" element={<FreelancerProfilePage />} />
+                <Route path="/messages" element={
+                  <ProtectedRoute requiresProfile>
+                    <MessagingPage />
+                  </ProtectedRoute>
+                } />
+                <Route path="/messages/:userId" element={
+                  <ProtectedRoute requiresProfile>
+                    <MessagingPage />
+                  </ProtectedRoute>
+                } />
                 <Route path="/onboarding" element={
                   <ProtectedRoute>
                     <Onboarding />

@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { MessageSquare, User } from 'lucide-react';
 import { Freelancer } from '@/data/freelancer-data';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 interface TalentCardProps {
   freelancer: Freelancer;
@@ -12,6 +12,8 @@ interface TalentCardProps {
 }
 
 const TalentCard = ({ freelancer, viewMode }: TalentCardProps) => {
+  const navigate = useNavigate();
+
   const cardClasses = viewMode === 'list'
     ? 'flex flex-col md:flex-row'
     : 'flex flex-col';
@@ -19,6 +21,10 @@ const TalentCard = ({ freelancer, viewMode }: TalentCardProps) => {
   const contentClasses = viewMode === 'list'
     ? 'flex-1'
     : '';
+
+  const handleMessage = () => {
+    navigate(`/inbox/${freelancer.id}`);
+  };
 
   return (
     <Card className={`glass hover-scale border-white/10 overflow-hidden ${cardClasses}`}>
@@ -34,7 +40,7 @@ const TalentCard = ({ freelancer, viewMode }: TalentCardProps) => {
             {viewMode === 'grid' && (
               <User size={24} className="text-skrypto-purple" />
             )}
-            <Link to={`/profile/${freelancer.username}`}>
+            <Link to={`/freelancer/${freelancer.id}`}>
               <h3 className="font-bold text-lg text-white hover:text-skrypto-purple transition-colors">
                 {freelancer.username}
               </h3>
@@ -77,13 +83,14 @@ const TalentCard = ({ freelancer, viewMode }: TalentCardProps) => {
             className="bg-skrypto-purple hover:bg-skrypto-purple/90 text-white flex-1"
             asChild
           >
-            <Link to={`/profile/${freelancer.username}`}>
+            <Link to={`/freelancer/${freelancer.id}`}>
               Hire
             </Link>
           </Button>
           <Button 
             variant="outline" 
             className="border-white/10 hover:bg-white/5 text-white flex items-center gap-2 flex-1"
+            onClick={handleMessage}
           >
             <MessageSquare size={16} />
             <span>Message</span>

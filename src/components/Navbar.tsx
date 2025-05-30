@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
-import { Bitcoin, MessageCircle } from 'lucide-react';
+import { Bitcoin, Inbox } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import WalletConnect from '@/components/WalletConnect';
 import ProfileButton from '@/components/ProfileButton';
@@ -41,15 +41,15 @@ const Navbar = () => {
             FAQ
           </Link>
           
-          {/* Add Membership and Messages links for logged-in users */}
+          {/* Add Membership and Inbox links for logged-in users */}
           {isConnected && (
             <>
               <Link to="/membership" className="text-white/80 hover:text-white transition-colors">
                 Membership
               </Link>
-              <Link to="/messages" className="text-white/80 hover:text-white transition-colors flex items-center gap-1">
-                <MessageCircle size={16} />
-                Messages
+              <Link to="/inbox" className="text-white/80 hover:text-white transition-colors flex items-center gap-1">
+                <Inbox size={16} />
+                Inbox
               </Link>
             </>
           )}
@@ -153,12 +153,12 @@ const Navbar = () => {
                 Membership
               </Link>
               <Link
-                to="/messages"
+                to="/inbox"
                 className="flex items-center gap-2 py-2 text-white/80 hover:text-white"
                 onClick={() => setMobileMenuOpen(false)}
               >
-                <MessageCircle size={16} />
-                Messages
+                <Inbox size={16} />
+                Inbox
               </Link>
             </>
           )}

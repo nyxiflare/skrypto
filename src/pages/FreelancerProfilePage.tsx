@@ -4,8 +4,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import ProfileHeader from '@/components/freelancer/ProfileHeader';
-import PortfolioGallery from '@/components/freelancer/PortfolioGallery';
-import ReviewSection from '@/components/reviews/ReviewSection';
+import FreelancerTabs from '@/components/freelancer/FreelancerTabs';
 import LeaveReviewForm from '@/components/reviews/LeaveReviewForm';
 import { useGetFreelancerProfile, useSubmitReview } from '@/hooks/useFreelancerProfile';
 import { Card, CardContent } from '@/components/ui/card';
@@ -69,7 +68,7 @@ const FreelancerProfilePage = () => {
     : 0;
 
   const handleMessage = () => {
-    navigate(`/messages/${freelancerId}`);
+    navigate(`/inbox/${freelancerId}`);
   };
 
   const handleHire = () => {
@@ -90,6 +89,9 @@ const FreelancerProfilePage = () => {
     );
   };
 
+  // Mock data for hasHiredBefore - in real app, check against user's hiring history
+  const hasHiredBefore = false;
+
   return (
     <div className="min-h-screen bg-skrypto-dark">
       <Navbar />
@@ -97,11 +99,11 @@ const FreelancerProfilePage = () => {
         <div className="mb-6">
           <Button
             variant="ghost"
-            onClick={() => navigate(-1)}
+            onClick={() => navigate('/explore')}
             className="text-white/70 hover:text-white hover:bg-white/5"
           >
             <ArrowLeft className="mr-2" size={16} />
-            Back
+            Back to Explore
           </Button>
         </div>
 
@@ -115,14 +117,15 @@ const FreelancerProfilePage = () => {
             onHire={handleHire}
           />
 
-          <PortfolioGallery portfolioItems={portfolio || []} />
+          <FreelancerTabs
+            portfolioItems={portfolio || []}
+            reviews={reviews || []}
+            averageRating={averageRating}
+            walletAddress={profile.wallet_address}
+            hasHiredBefore={hasHiredBefore}
+          />
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <ReviewSection
-              reviews={reviews || []}
-              averageRating={averageRating}
-            />
-
             <div className="space-y-4">
               {!showReviewForm ? (
                 <Card className="glass border-white/10">
